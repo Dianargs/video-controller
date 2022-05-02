@@ -21,7 +21,7 @@ export default function addvideo() {
           <Image borderRadius ="10px" src = "images/thumbnail.png" w="735px" />
           <Textarea bg="#E4DED2" borderRadius ="10px" h="370px" w="300px" placeholder='Add Details about the video here...' _placeholder={{ opacity: 0.9, color: '#405F73' }}/>
           <VStack bg="#E4DED2" borderRadius="10px" align={'center'} w="20%" maxH="370px">
-            <Input mt="5px" mb="5px" w="90%" placeholder='Find your tag' bg={'white'} _placeholder={{ opacity: 0.7, color: '#405F73' }}/>
+            <Input  bg={'white'} />
             <Box w="90%" overflow="auto" css={{ 
               '&::-webkit-scrollbar': 
               { width: '4px', },
