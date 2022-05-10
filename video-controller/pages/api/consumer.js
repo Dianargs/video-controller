@@ -3,28 +3,33 @@ const { Kafka } = require('kafkajs')
 
 const kafka = new Kafka({
   clientId: 'my-app',
-  brokers: ['localhost:9092'],
+  //brokers: ['192.168.1.154:9094'],
+  //brokers: ['192.168.1.141:9094'], //casa
+  brokers: ['192.168.0.102:9094'],
+ 
 })
 
+var msgtosend=[];
 
 export default function handler(req, res) {
- 
-  consumer();
- 
+  
+  consumer(); 
+  res.status(200).json({ name: msgtosend[msgtosend.length-1] })
+  
 }
 
 async function consumer(){
+  
   const consumer = kafka.consumer({ groupId: 'test-group' })
 
   await consumer.connect()
-  await consumer.subscribe({ topic: 'quickstart', fromBeginning: true })
-
+  await consumer.subscribe({ topic: 'quickstart', fromBeginning: false })
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
-      console.log({
-        value: message.value.toString(),
-      })
+      msgtosend.push(message.value.toString()),
+      console.log(
+        msgtosend[msgtosend.length-1]
+      )
     },
   })
-  return message.value.toString();
 }
