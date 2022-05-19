@@ -6,21 +6,13 @@ import ReactDOM from 'react-dom';
 import  Button from '../../styles/button.js'
 import Header from '../../styles/header.js'
 
-/*function sendmessage(message,topic){
-  const msg = fetch("/api/producer?message=" + message+"&topic="+topic);
-}
-function readmessage(){
-  const msg = fetch("/api/consumer");
-  console.log(msg);
-}*/
-
 export default function playsequence({initialData}) {
   const [data, setData] = useState(initialData);
   
   const sendMessage = async (message) => {
-    //const req = fetch("http://192.168.1.154:3000/api/producer?message=" + message + "&topic=quickstart");
-    //const req = fetch("http://192.168.1.141:3000/api/producer?message=" + message + "&topic=quickstart"); //casa
-    const req = fetch("http://192.168.0.102:3000/api/producer?message=" + message + "&topic=quickstart");
+    //const req = fetch("http://192.168.1.154:3005/api/producer?message=" + message + "&topic=quickstart");
+    const req = fetch("http://192.168.1.141:3005/api/producer?message=" + message + "&topic=quickstart"); //casa
+    //const req = fetch("http://192.168.0.102:3005/api/producer?message=" + message + "&topic=quickstart");
     return setData(req);
   }
 

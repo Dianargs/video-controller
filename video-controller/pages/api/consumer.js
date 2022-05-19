@@ -4,32 +4,37 @@ const { Kafka } = require('kafkajs')
 const kafka = new Kafka({
   clientId: 'my-app',
   //brokers: ['192.168.1.154:9094'],
-  //brokers: ['192.168.1.141:9094'], //casa
-  brokers: ['192.168.0.102:9094'],
+  brokers: ['192.168.1.141:9094'], //casa
+  //brokers: ['192.168.0.102:9094'],
  
 })
 
 var msgtosend=[];
+var tmp='';
+var timetosend='';
 
 export default function handler(req, res) {
   
   consumer(); 
-  res.status(200).json({ name: msgtosend[msgtosend.length-1] })
+  if(tmp!=msgtosend[0] || msgtosend[0]==''){
+    timetosend =Date.now();
+  }
+  
+  tmp=msgtosend[0];
+  res.status(200).json({ value: msgtosend[0], time: timetosend });
   
 }
 
 async function consumer(){
   
-  const consumer = kafka.consumer({ groupId: 'test-group' })
+  const consumer = kafka.consumer({ groupId: 'test-group'+ Date.now()})
 
   await consumer.connect()
   await consumer.subscribe({ topic: 'quickstart', fromBeginning: false })
+  
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
-      msgtosend.push(message.value.toString()),
-      console.log(
-        msgtosend[msgtosend.length-1]
-      )
+      msgtosend[0] =message.value.toString()
     },
   })
 }
