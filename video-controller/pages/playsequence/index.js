@@ -7,12 +7,13 @@ import  Button from '../../styles/button.js'
 import Header from '../../styles/header.js'
 
 export default function playsequence({initialData}) {
+  
   const [data, setData] = useState(initialData);
   
   const sendMessage = async (message) => {
-    //const req = fetch("http://192.168.1.154:3005/api/producer?message=" + message + "&topic=quickstart");
-    const req = fetch("http://192.168.1.141:3005/api/producer?message=" + message + "&topic=quickstart"); //casa
-    //const req = fetch("http://192.168.0.102:3005/api/producer?message=" + message + "&topic=quickstart");
+    const req = fetch("http://192.168.1.154:3005/api/producer?message=" + message + "&topic=quickstart");
+    //const req = fetch("http://192.168.1.141:3005/api/producer?message=" + message + "&topic=quickstart"); //casa
+    //const req = fetch("http://192.168.0.100:3005/api/producer?message=" + message + "&topic=quickstart");
     return setData(req);
   }
 
