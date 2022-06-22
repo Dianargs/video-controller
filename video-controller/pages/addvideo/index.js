@@ -2,6 +2,7 @@ import {Box,Textarea,Checkbox, Image, Text, Input, HStack, VStack, Center, Link,
 import Header from '../../styles/header'
 import { useState, useRef, useEffect } from 'react'
 import React from 'react';
+import $ from "jquery";
 
 
 import  ButtonSmall from '../../styles/buttonSmall.js'
@@ -11,18 +12,17 @@ export default function addvideo({filters}) {
 
   //handle input
   const [nameVideo, setnameVideo] = React.useState('')
- 
+  const [filterState, setFilterState] = React.useState([])
   const [tags, setTags] = React.useState([])
-  
   const [infoVideo, setinfoVideo] = React.useState('')
-  
-  //let filters = ["Clean","Contaminated","Men"]
-
-  console.log("Result:"+ nameVideo + tags + infoVideo)
-
-  const [selectedFile, setSelectedFile] = useState();
+  const [nameNewFilter, setnameNewFilter] = React.useState('')
+  const [selectedFile, setSelectedFile] = useState()
   const [videoSrc, setVideoSrc] = useState('')
   const videoRef = useRef(null)
+  
+  useEffect(()=>{
+    setFilterState(filters)
+  }, [filters])
   
 
   useEffect(() => {
@@ -31,9 +31,6 @@ export default function addvideo({filters}) {
   }, [selectedFile])
 
   
-  const handleSubmission = () => {
-	};
-
   let submitForm = async (e) => {
     e.preventDefault();
     let res = await fetch("http://localhost:3005/api/video", {
@@ -52,27 +49,38 @@ export default function addvideo({filters}) {
     setinfoVideo("");
     setTags([]);
     
+  }  
+
+  let addNewFilter = async (e) =>{
+  
+    e.preventDefault();
+    let res = await fetch("http://localhost:3005/api/filtertags", {
+      method: "POST",
+      body: JSON.stringify({
+        name: nameNewFilter,
+      }),
+    });
+    res = await res.json();
+    console.log(res)
+    setFilterState([...filterState,res]);
+    setnameNewFilter("");
   }
 
-
-
-  
-  
-  
+ 
   return (
    
     <Box >
       <Header title ={"Add Video"}/>
       <form onSubmit={submitForm}>
         <Center>
-          <HStack mt="5%" ml="5%" spacing={10} >
-            <Button class="file-input" _hover={{transform: 'scale(1.02)'}} _focus={{transform: 'scale(1.02)'}} style={{
-              
+          <HStack mt="1%" ml="5%" spacing={10} >
+            <Button class="file-input" _hover={{transform: 'scale(1.02)'}} _focus={{transform: 'scale(1.02)'}} style={
+              {
                 display: 'block',
                 position: 'relative',
                 width: '200px',
-                height: '50px',
-                'border-radius': '25px',
+                height: '60px',
+                'border-radius': '10px',
                 background: '#E4DED2',
                 'box-shadow': '0 4px 7px rgba(0, 0, 0, 0.4)',
                 display: 'flex',
@@ -82,15 +90,16 @@ export default function addvideo({filters}) {
                 'font-weight': 'bold',
                 cursor: 'pointer',
                 transition: 'transform .2s ease-out',  
-            }}>
+            }
+            }>
             <input type="file" name="file"  onChange={(e) => setSelectedFile(e.target.files[0])} style={
               { 
-                
                   opacity: '0',
                   width: '200px',
                   height: '50px',
                   position: 'absolute', 
-} }/>
+              } 
+            }/>
             <Image src = "images/addVideoIcon.png" width="40px"  mr="10px"/>
             <label for="file" style={{ color:'#405F73'}}>Select file</label>
             </Button>
@@ -100,9 +109,8 @@ export default function addvideo({filters}) {
         </Center>
         
         <Center>
-        
-          <HStack mt="2%" ml="5%" spacing={10}>
-          <Box bg="lightgrey" marginBottom="1rem" w="900px" >
+          <HStack mt="2%"  spacing={10}>
+          <Box bg="lightgrey" marginBottom="1rem" w="700px" >
             <AspectRatio maxH="50%" ratio={16 / 9}>
                 <video
                   id="video-summary"
@@ -115,7 +123,10 @@ export default function addvideo({filters}) {
             </Box>
             <Textarea bg="#E4DED2" borderRadius ="10px" h="370px" w="300px" placeholder='Add Details about the video here...' _placeholder={{ opacity: 0.9, color: '#405F73' }} value={infoVideo}  onChange={(e)=> setinfoVideo(e.target.value)} type ="text"/>
             <VStack bg="#E4DED2" borderRadius="10px" align={'center'} w="20%" maxH="370px">
-              <Input  bg={'white'} />
+              <HStack>
+                  <Input  bg={'white'} value={nameNewFilter}  onChange={(e)=> setnameNewFilter(e.target.value)} type ="text" ></Input>
+                  <Button onClick={addNewFilter} ><Image borderRadius ="10px" src = "images/add.png" w="20px"  /></Button>
+              </HStack> 
               <Box w="90%" overflow="auto" css={{ 
                 '&::-webkit-scrollbar': 
                 { width: '4px', },
@@ -127,13 +138,12 @@ export default function addvideo({filters}) {
                   borderRadius: '24px',
                 },
                 }}>
-                <VStack align={'left'} >
-                  <CheckboxGroup value={tags} onChange={(e)=>{setTags(e)}}>
-                    {filters.map((currentElement, index) => (
-                      <Checkbox  value={filters[index].name}  borderColor="#405F73">{filters[index].name}</Checkbox>
+                <VStack id="checkboxDiv" align={'left'} >
+                  <CheckboxGroup  value={tags} onChange={(e)=>{setTags(e)}}>
+                    {filterState.map((currentElement, index) => (
+                      <Checkbox  value={currentElement.name} key={index} borderColor="#405F73">{currentElement.name}</Checkbox>
                     ))}
                   </CheckboxGroup>
-                
                 </VStack>
               </Box>  
             </VStack> 
@@ -156,8 +166,6 @@ export async function getServerSideProps(context) {
       },
   });
   let filters = await res.json();
-
-  console.log("Which Filters coming in:"+ filters["name"])
   return {
       props: { filters },
   };
