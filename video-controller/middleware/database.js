@@ -1,7 +1,8 @@
 import { MongoClient } from 'mongodb';
 
 
-const uri ='mongodb://root:example@192.168.1.18:27017/'
+//const uri ='mongodb://root:example@192.168.1.141:27017/'
+const uri ='mongodb://root:example@192.168.0.100:27017/'
 const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,

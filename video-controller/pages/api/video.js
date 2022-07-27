@@ -5,6 +5,7 @@ export default async function handler(req,res) {
   const db = client.db("VideoCatalog");
   switch(req.method) {
     case "POST":
+      console.log("req.body VIDEOS: ", req.body);
       let bodyObject = JSON.parse(req.body); 
       const checkVideo = await db.collection("Videos").findOne({"video_name":bodyObject["video_name"]});
       console.log("check");
