@@ -27,12 +27,14 @@ export default function addvideo({filters}) {
 
   useEffect(() => {
     const src = URL.createObjectURL(new Blob([selectedFile], {type: 'video/mp4'}))
+    console.log("SRC"+new Blob([selectedFile], {type: 'video/mp4'}));
     setVideoSrc(src)
   }, [selectedFile])
 
   
   let submitForm = async (e) => {
     e.preventDefault();
+    
     let res = await fetch("http://localhost:3005/api/video", {
       method: "POST",
       body: JSON.stringify({
@@ -43,6 +45,14 @@ export default function addvideo({filters}) {
       }),
     });
     res = await res.json();
+    let blob = new Blob([selectedFile], {type: 'video/mp4'});
+    
+
+    let upres =await fetch("http://localhost:8085/upload_content/videos/ahaha.mp4",{
+      method: "POST",
+      body: JSON.stringify({file: blobTo64(blob)}),
+    });
+    upres = await upres.json();
 
     setnameVideo("");
     setSelectedFile("");
@@ -170,4 +180,10 @@ export async function getServerSideProps(context) {
       props: { filters },
   };
 }
-
+ function blobTo64(blob){
+  return new Promise((resolve,_) => {
+    const reader = new FileReader();
+    reader.onloadend = ()=> resolve(reader.result);
+    reader.readAsDataURL(blob);
+  })
+ }
