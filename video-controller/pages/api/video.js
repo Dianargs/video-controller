@@ -22,7 +22,8 @@ export default async function handler(req,res) {
       res.json({status: 200});
       break;
     case "GET":
-      const videos = await db.collection("Videos").find({}).toArray();
+      const videos = await db.collection("Videos").countDocuments();
+      
       res.json({status: 200, data: videos });
       break;
   }

@@ -8,7 +8,7 @@ import $ from "jquery";
 import  ButtonSmall from '../../styles/buttonSmall.js'
 
 
-export default function addvideo({filters}) {
+export default function addvideo({filters, n_videos}) {
 
   //handle input
   const [nameVideo, setnameVideo] = React.useState('')
@@ -34,25 +34,26 @@ export default function addvideo({filters}) {
   
   let submitForm = async (e) => {
     e.preventDefault();
-    
+    let tmp = parseInt(n_videos['data']) +1;
     let res = await fetch("http://localhost:3005/api/video", {
       method: "POST",
       body: JSON.stringify({
         video_name: selectedFile.name,
-        new_video_name:nameVideo,
+        new_video_name:"video"+tmp+".MP4",
         video_info: infoVideo,
         filters : tags
       }),
     });
     res = await res.json();
     let blob = new Blob([selectedFile], {type: 'video/mp4'});
-    
+   
+    let result = (await blobTo64(blob)).split(",");
 
     let upres =await fetch("http://localhost:8085/upload_content/videos/ahaha.mp4",{
       method: "POST",
-      body: JSON.stringify({file: blobTo64(blob)}),
-    });
-    upres = await upres.json();
+      body:JSON.stringify({file: String(result[1]) }),
+      headers:{'Content-Type':'application/json'}
+    }).then(console.log(upres));
 
     setnameVideo("");
     setSelectedFile("");
@@ -114,8 +115,7 @@ export default function addvideo({filters}) {
             <label for="file" style={{ color:'#405F73'}}>Select file</label>
             </Button>
            
-            <Input placeholder='Video Name' _placeholder={{ opacity: 0.9, color: '#405F73' }} size='md' h="60px" w="500px"  bg="#E4DED2" value={nameVideo}  onChange={(e)=> setnameVideo(e.target.value)} type ="text" />
-          </HStack>
+        </HStack>
         </Center>
         
         <Center>
@@ -176,14 +176,25 @@ export async function getServerSideProps(context) {
       },
   });
   let filters = await res.json();
+  
+  let nvideosres= await fetch("http://localhost:3005/api/video",{
+    method: "GET",
+      headers: {
+          "Content-Type": "application/json",
+      },
+  });
+  let n_videos = await nvideosres.json();
+  console.log("VIDEOS:" + n_videos);
   return {
-      props: { filters },
+      props: { filters,n_videos },
   };
+
+  
 }
- function blobTo64(blob){
-  return new Promise((resolve,_) => {
+
+const blobTo64 = blob => new  Promise((resolve,reject) => {
     const reader = new FileReader();
-    reader.onloadend = ()=> resolve(reader.result);
     reader.readAsDataURL(blob);
-  })
- }
+    reader.onload = ()=> resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });

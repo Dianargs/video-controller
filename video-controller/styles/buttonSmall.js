@@ -1,12 +1,12 @@
-import { Box, HStack, Image ,Text } from '@chakra-ui/react'
+import { Box, VStack, Image ,Text } from '@chakra-ui/react'
 
 const ButtonSmall = ({title,icon}) => {
     return ( 
-      <Box bg="#E4DED2" borderRadius ="5px" textAlign="center"   width="200px" height="60px" horizontalAlign   >
-          <HStack>
-            <Image src = {icon} width="50px" m="2" />
-            <Text  fontSize={'larger'}>{title}</Text>
-          </HStack>
+      <Box bg="#E4DED2" borderRadius ="5px" textAlign="center"   width="80px" height="80px"    >
+          <VStack>
+            <Image src = {icon} width="50px" />
+            <Text  textColor={"#405F73"} fontSize={'larger'}>{title}</Text>
+          </VStack>
       </Box>
     )
   }

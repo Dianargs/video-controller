@@ -23,33 +23,32 @@ export default function addimage() {
   }, [selectedFile])
 
   
-  /*let submitForm = async (e) => {
+  let submitForm = async (e) => {
     e.preventDefault();
-    let res = await fetch("http://localhost:3005/api/video", {
+    let blob = new Blob([selectedFile], {type: 'video/mp4'});
+   
+    let result = (await blobTo64(blob)).split(",");
+  
+    let upres =await fetch("http://localhost:8085/upload_content/images/"+nameImage+".png",{
       method: "POST",
-      body: JSON.stringify({
-        video_name: selectedFile.name,
-        new_video_name:nameVideo,
-        video_info: infoVideo,
-        filters : tags
-      }),
-    });
-    res = await res.json();
-
-    setnameVideo("");
+      body:JSON.stringify({file: String(result[1]) }),
+      headers:{'Content-Type':'application/json'}
+    }).then(console.log(upres));
+  
+    setNameImage("");
     setSelectedFile("");
-    setinfoVideo("");
-    setTags([]);
-    
-  }  */
 
+    
+    
+  }  
+ 
 
  
   return (
    
     <Box >
       <Header title ={"Add Image"}/>
-      <form >
+      <form onSubmit={submitForm}>
         <Center mt="1%">
         <HStack >
         <Button class="file-input" ml="10%" mr="5%" _hover={{transform: 'scale(1.02)'}} _focus={{transform: 'scale(1.02)'}} style={
@@ -101,3 +100,10 @@ export default function addimage() {
 }
 
 
+
+const blobTo64 = blob => new  Promise((resolve,reject) => {
+  const reader = new FileReader();
+  reader.readAsDataURL(blob);
+  reader.onload = ()=> resolve(reader.result);
+  reader.onerror = error => reject(error);
+});
