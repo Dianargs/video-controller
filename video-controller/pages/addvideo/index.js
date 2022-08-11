@@ -8,7 +8,7 @@ import $ from "jquery";
 import  ButtonSmall from '../../styles/buttonSmall.js'
 
 
-export default function addvideo({filters, n_videos}) {
+export default function addvideo({filters}) {
 
   //handle input
   const [nameVideo, setnameVideo] = React.useState('')
@@ -18,53 +18,75 @@ export default function addvideo({filters, n_videos}) {
   const [nameNewFilter, setnameNewFilter] = React.useState('')
   const [selectedFile, setSelectedFile] = useState()
   const [videoSrc, setVideoSrc] = useState('')
+  const [imgSrc, setImgSrc] = useState('')
+  const [tmp, setTmp] = useState('')
   const videoRef = useRef(null)
+  const imagemRef = useRef(null)
+ 
+  console.log(filters);
   
+  /* A react hook that is called when the component is mounted. It is used to set the state of the
+  component. */
   useEffect(()=>{
     setFilterState(filters)
   }, [filters])
-  
+
+
 
   useEffect(() => {
     const src = URL.createObjectURL(new Blob([selectedFile], {type: 'video/mp4'}))
-    console.log("SRC"+new Blob([selectedFile], {type: 'video/mp4'}));
     setVideoSrc(src)
   }, [selectedFile])
 
   
+ 
   let submitForm = async (e) => {
     e.preventDefault();
-    let tmp = parseInt(n_videos['data']) +1;
+    let nvideosres= await fetch("http://localhost:3005/api/video",{
+      method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+    let n_videos = await nvideosres.json();
+    tmp = parseInt(n_videos['data']) +1;
+ /* Sending a POST request to the server with the video name, new video name, video info and filters. */
     let res = await fetch("http://localhost:3005/api/video", {
       method: "POST",
       body: JSON.stringify({
         video_name: selectedFile.name,
         new_video_name:"video"+tmp+".MP4",
         video_info: infoVideo,
-        filters : tags
+        filters : tags,
+        thumbnail: imgSrc
       }),
     });
     res = await res.json();
+   /* Converting the video to base64 and then sending it to the server. */
     let blob = new Blob([selectedFile], {type: 'video/mp4'});
    
     let result = (await blobTo64(blob)).split(",");
 
-    let upres =await fetch("http://localhost:8085/upload_content/videos/ahaha.mp4",{
+    let upres =await fetch("http://localhost:8085/upload_content/videos/video"+tmp+".MP4",{
       method: "POST",
       body:JSON.stringify({file: String(result[1]) }),
       headers:{'Content-Type':'application/json'}
-    }).then(console.log(upres));
+    });
 
     setnameVideo("");
     setSelectedFile("");
     setinfoVideo("");
     setTags([]);
+    setImgSrc("");
+  
+    imagemRef = null;
     
   }  
 
   let addNewFilter = async (e) =>{
   
     e.preventDefault();
+   /* Sending a POST request to the server with the name of the new filter. */
     let res = await fetch("http://localhost:3005/api/filtertags", {
       method: "POST",
       body: JSON.stringify({
@@ -72,11 +94,20 @@ export default function addvideo({filters, n_videos}) {
       }),
     });
     res = await res.json();
-    console.log(res)
+
     setFilterState([...filterState,res]);
     setnameNewFilter("");
   }
 
+  let capture = (e) =>{
+
+   
+    const refV = videoRef.current;
+    const refC = imagemRef.current;
+
+    refC.getContext('2d').drawImage(refV, 0, 0,320, 180);
+    setImgSrc(refC.toDataURL("image/png"));
+  }
  
   return (
    
@@ -130,6 +161,11 @@ export default function addvideo({filters, n_videos}) {
                   src={videoSrc}
                 />
               </AspectRatio>
+              <Link onClick={(e) => capture()}>
+                <Button>
+                  Capture
+                </Button>
+              </Link>
             </Box>
             <Textarea bg="#E4DED2" borderRadius ="10px" h="370px" w="300px" placeholder='Add Details about the video here...' _placeholder={{ opacity: 0.9, color: '#405F73' }} value={infoVideo}  onChange={(e)=> setinfoVideo(e.target.value)} type ="text"/>
             <VStack bg="#E4DED2" borderRadius="10px" align={'center'} w="20%" maxH="370px">
@@ -162,13 +198,21 @@ export default function addvideo({filters, n_videos}) {
         <Center mt ="1%">
         <Button type="submit">Submit</Button>
         </Center>
+        <canvas ref={imagemRef} id="canvas" width={"320"} height="180" display="none"></canvas>
       </form>
-     
     </Box>
   )
 }
 
+/**
+ * It's a function that gets the filters and the number of videos from the server and returns them as
+ * props.
+ * @param context - This is the context object that Next.js passes to the getServerSideProps function.
+ * It contains the query object, which is the query string of the URL.
+ * @returns The filters and n_videos are being returned.
+ */
 export async function getServerSideProps(context) {
+  /* This is a GET request to the server to get the filters. */
   let res = await fetch("http://localhost:3005/api/filtertags", {
       method: "GET",
       headers: {
@@ -177,19 +221,11 @@ export async function getServerSideProps(context) {
   });
   let filters = await res.json();
   
-  let nvideosres= await fetch("http://localhost:3005/api/video",{
-    method: "GET",
-      headers: {
-          "Content-Type": "application/json",
-      },
-  });
-  let n_videos = await nvideosres.json();
-  console.log("VIDEOS:" + n_videos);
+  /* A GET request to the server to get the number of videos. */
+ 
   return {
-      props: { filters,n_videos },
-  };
-
-  
+      props: { filters },
+  };  
 }
 
 const blobTo64 = blob => new  Promise((resolve,reject) => {
@@ -198,3 +234,4 @@ const blobTo64 = blob => new  Promise((resolve,reject) => {
     reader.onload = ()=> resolve(reader.result);
     reader.onerror = error => reject(error);
   });
+
