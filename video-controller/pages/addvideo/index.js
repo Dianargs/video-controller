@@ -2,11 +2,6 @@ import {Box,Textarea,Checkbox, Image, Text, Input, HStack, VStack, Center, Link,
 import Header from '../../styles/header'
 import { useState, useRef, useEffect } from 'react'
 import React from 'react';
-import $ from "jquery";
-
-
-import  ButtonSmall from '../../styles/buttonSmall.js'
-
 
 export default function addvideo({filters}) {
 
@@ -42,6 +37,7 @@ export default function addvideo({filters}) {
  
   let submitForm = async (e) => {
     e.preventDefault();
+    /* This is a GET request to the server to get the number of videos. */
     let nvideosres= await fetch("http://localhost:3005/api/video",{
       method: "GET",
         headers: {
@@ -72,13 +68,12 @@ export default function addvideo({filters}) {
       body:JSON.stringify({file: String(result[1]) }),
       headers:{'Content-Type':'application/json'}
     });
-
+/* Setting the state of the component to null. */
     setnameVideo("");
     setSelectedFile("");
     setinfoVideo("");
     setTags([]);
     setImgSrc("");
-  
     imagemRef = null;
     
   }  
@@ -99,12 +94,13 @@ export default function addvideo({filters}) {
     setnameNewFilter("");
   }
 
+  /**
+   * It takes a video element, and draws it to a canvas element.
+   * @param e - the event object
+   */
   let capture = (e) =>{
-
-   
     const refV = videoRef.current;
     const refC = imagemRef.current;
-
     refC.getContext('2d').drawImage(refV, 0, 0,320, 180);
     setImgSrc(refC.toDataURL("image/png"));
   }
@@ -134,21 +130,20 @@ export default function addvideo({filters}) {
                 transition: 'transform .2s ease-out',  
             }
             }>
-            <input type="file" name="file"  onChange={(e) => setSelectedFile(e.target.files[0])} style={
-              { 
-                  opacity: '0',
-                  width: '200px',
-                  height: '50px',
-                  position: 'absolute', 
-              } 
-            }/>
-            <Image src = "images/addVideoIcon.png" width="40px"  mr="10px"/>
-            <label for="file" style={{ color:'#405F73'}}>Select file</label>
+              <input type="file" name="file"  onChange={(e) => setSelectedFile(e.target.files[0])} style={
+                { 
+                    opacity: '0',
+                    width: '200px',
+                    height: '50px',
+                    position: 'absolute', 
+                } 
+              }/>
+              <Image src = "images/addVideoIcon.png" width="40px"  mr="10px"/>
+              <label for="file" style={{ color:'#405F73'}}>Select file</label>
             </Button>
-           
-        </HStack>
+          </HStack>
         </Center>
-        
+    
         <Center>
           <HStack mt="2%"  spacing={10}>
           <Box bg="lightgrey" marginBottom="1rem" w="700px" >

@@ -1,12 +1,12 @@
-import {Box,HStack,Button,Center,Image, Text, Link} from '@chakra-ui/react'
+import {Box,HStack,Button,Center,Image, Text, Link, VStack} from '@chakra-ui/react'
 import Header from '../../styles/header'
 
 export default function newsequence() {
   return (
     <Box>
       <Header title ={"New Sequence"}/>
-      <Center>
-        <Box  borderRadius ="10px" bg="#E4DED2"  minW="40%"maxW="25%" maxH="60%" >
+      <HStack ml="5%">
+        <Box  borderRadius ="10px" bg="#E4DED2"  minW="45%"maxW="25%" maxH="60%" mr="20%" >
           <Text align={"center"} fontSize="25px" textColor={"#405F73"}>State of the Sequence</Text>
           <Box borderRadius ="10px" m="2.5%" maxW="95%"
               as='video'
@@ -24,8 +24,25 @@ export default function newsequence() {
             </Button>
           </Box>
         </Box>
-      </Center>
-      <Center mt="2%">
+    
+      <VStack >
+        <Link href='/choosevideo'>
+          <Button width="200px" height="60px" bg="#E4DED2">
+            <Image borderRadius ="10px" src = "images/add.png" w="30px" mr="5%" />
+            <Text>Add Videos</Text>
+          </Button>
+        </Link>
+        <Link href='/chooseimage'>
+          <Button width="200px" height="60px" bg="#E4DED2">
+            <Image borderRadius ="10px" src = "images/add.png" w="30px" mr="5%" />
+            <Text>Add Image</Text>
+          </Button>
+        </Link>
+      </VStack>
+ 
+      </HStack>
+      
+      <Center mt="1%">
   
         <Box borderRadius ="10px" bg="#E4DED2" minW="95%" minH="90%" overflow="auto" css={{ 
                 '&::-webkit-scrollbar': 
@@ -51,22 +68,10 @@ export default function newsequence() {
             <Text  fontSize="25px" textColor={"#405F73"}  ml="2%" >3</Text>
             <Image borderRadius ="10px" src = "images/thumbnail.png" w="10%"  />
             <Image src = "images/arrows.png" width="50px" m="2" />
-            <Text  fontSize="25px" textColor={"#405F73"}  ml="2%" >3</Text>
-            <Image borderRadius ="10px" src = "images/thumbnail.png" w="10%"  />
-            <Image src = "images/arrows.png" width="50px" m="2" />
-            <Text  fontSize="25px" textColor={"#405F73"}  ml="2%" >3</Text>
-            <Image borderRadius ="10px" src = "images/thumbnail.png" w="10%"  />
-            <Image src = "images/arrows.png" width="50px" m="2" />
-            <Text  fontSize="25px" textColor={"#405F73"}  ml="2%" >3</Text>
-            <Image borderRadius ="10px" src = "images/thumbnail.png" w="10%"  />
-            <Image src = "images/arrows.png" width="50px" m="2" />
+            
 
             <Text  fontSize="25px" textColor={"#405F73"}  ml="2%" >4</Text>
-            <Link href='/choosevideo'>
-              <Button width="200px" height="60px" bg="#E4DED2">
-                <Image borderRadius ="10px" src = "images/add.png" w="50px"  />
-              </Button>
-            </Link>
+            
           </HStack>
         
         </Box>

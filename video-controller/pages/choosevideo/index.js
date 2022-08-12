@@ -14,66 +14,102 @@ import ButtonSmall from '../../styles/buttonSmall';
 
 
 export default function choosevideo({metadata}) {
-  const [showBox,setShowBox] = React.useState(false);
-  const [videoMetadata,setVideoMetadata] = React.useState([]);
-  const [videoThumb,setVideoThumb] = React.useState();
-  const [videoSrc, setVideoSrc] = useState('')
+  const [videoSrcInfo,setVideoSrcInfo] = React.useState(null);
+  const [videoSrc,setVideoSrc] = React.useState(null);
+  const [seqVideos, setSeqVideos] = React.useState([]);
+ 
   const videoRef = useRef(null);
 
+  console.log(seqVideos.length);
 
-  //setVideoMetadata(metadata);
-  
-  
-  console.log(metadata);
+  const updateList = (videoName)=>{
+    setSeqVideos(seqVideos.filter(index=> index !== videoName ))
+  }
 
-  const PreviewBox = () => (
-    <Box bg="#E4DED2" borderRadius ="10px"  p="1%" maxW="50%" h="520px" >
-      <Text  fontSize="25px" textColor={"#405F73"} >Video1</Text>
-      <Center>
-      <Image borderRadius ="10px" src = "images/thumbnail.png" maxW="80%" />
-      </Center>
-      <Text  textAlign="center" fontSize="20px" textColor={"#405F73"} >Sick Girl holding an apple with clean hands, coughts to the apple.</Text>
-      <HStack>
-        <Box>
-          <Popover >
-            <PopoverTrigger>
-              <Button bg='#405F73' textColor={"#E4DED2"}>Show Tags</Button>
-            </PopoverTrigger>
-            <PopoverContent>
-              <PopoverArrow />
-              <PopoverCloseButton />
-              <PopoverHeader>Tags associated with this video</PopoverHeader>
-              <PopoverBody>
-                <UnorderedList>
-                  <ListItem>Woman</ListItem>
-                  <ListItem>Contaminated</ListItem>
-                  <ListItem>Fruit</ListItem>
-                </UnorderedList>
-              </PopoverBody>
-            </PopoverContent>
-          </Popover>    
-        </Box>
+  const ShowButton =(e) => {
+    return( 
+    <Link onClick={(e)=>setSeqVideos([...seqVideos,videoSrcInfo['new_video_name']])} >
+      <Box bg="#405F73" borderRadius ="90%" p="1%" width="50px" height="50px" verticalAlign="center" >
+        <Image src = {'images/check.png'}   />
+      </Box>
+    </Link>
+    )
+  }
 
-        <Box >
-          <Link >
-            <Box bg="#405F73" borderRadius ="90%" p="1%" width="50px" height="50px" verticalAlign="center"  >
-              <Image src = {'images/check.png'}   />
-            </Box>
-          </Link>
-        </Box>
-      </HStack>
-    </Box>
-  )
+  let  submitSeq = async (e) => {
 
+      let res = await fetch("http://localhost:3005/api/tmp", {
+        method: "POST",
+        body: JSON.stringify({
+          video_names: seqVideos,
+        }),
+        headers:{'Content-Type':'application/json'}
+      });
+      res = await res.json();
+    
+  }
+
+  const PreviewBox = (e) =>  {
+    
+    return( 
+
+      <Box bg="#E4DED2" borderRadius ="10px"  p="1%" minW="50%" h="520px"  >
+        <Text  fontSize="25px" textColor={"#405F73"} >{videoSrcInfo['new_video_name']}</Text>
+        <AspectRatio maxH="50%" ratio={16 / 9}>
+              <video
+                id="video-summary"
+                tag={"video/mp4"}
+                ref={videoRef}
+                controls
+                src={"http://localhost:8085/download_content/videos/"+videoSrcInfo['new_video_name']}
+              />
+          </AspectRatio>
+        <Text  textAlign="center" fontSize="20px" textColor={"#405F73"} >{videoSrcInfo['video_info']}</Text>
+        <HStack>
+          <Box>
+            <Popover >
+              <PopoverTrigger>
+                <Button bg='#405F73' textColor={"#E4DED2"}>Show Tags</Button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <PopoverArrow />
+                <PopoverCloseButton />
+                <PopoverHeader>Tags associated with this video</PopoverHeader>
+                <PopoverBody>
+                  <UnorderedList>
+                  {videoSrcInfo['filters'].map((currentElement, index) => (
+                    <ListItem>{currentElement}</ListItem>
+                  ))}                    
+                  </UnorderedList>
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>    
+          </Box>
+          
+          <Box >
+            { seqVideos.length<3 ? <ShowButton/> : <Text>No more space</Text>}  
+            <Link onClick={(e)=>updateList(videoSrcInfo['new_video_name'])} >
+              <Box bg="#405F73" borderRadius ="90%" p="1%" width="50px" height="50px" verticalAlign="center" >
+                <Image src = {'images/play-button.png'}   />
+              </Box>
+            </Link>
+          </Box>
+        </HStack>
+      </Box>
+    )
+} 
   return (
     <Box>
       <Header title ={"Choose Video"}/>
       <HStack>
         <ButtonSmall title={"Filters"} icon ={"images/lupa.png"} />
-        <Box bg="#E4DED2" borderRadius ="10px"  p="0.5%" w="100%" h="90px"></Box>
+        <Box bg="#E4DED2" borderRadius ="10px"  p="0.5%" w="100%" h="90px"> 
+        { seqVideos.length==3 ? <Link onClick={submitSeq}><ButtonSmall title={"Submit"} icon ={"images/add.png"} /></Link> : null}
+        
+        </Box>
       </HStack>
       <HStack mt="1%">
-        <Box bg="#E4DED2" borderRadius ="10px"  p="0.5%" maxW="100%" maxH="520px" overflow="auto" css={{ 
+        <Box bg="#E4DED2" borderRadius ="10px"  p="0.5%" maxW="50%" h="520px" overflow="auto" css={{ 
                 '&::-webkit-scrollbar': 
                 { width: '1px', },
                 '&::-webkit-scrollbar-track': {
@@ -83,28 +119,34 @@ export default function choosevideo({metadata}) {
                   background: '#405F73',
                   borderRadius: '24px',
                 },}} >
-          <SimpleGrid minChildWidth={"300px"} ml="1%">     
+          <SimpleGrid columns={3} spacing={2} ml="1%">     
             
           {metadata.map((currentElement, index) => (
-            <Box >
-              <Text> {currentElement['new_video_name']} </Text>
-              <Image src={currentElement['thumbnail']}/>
+            <Link onClick={(e)=>setVideoSrcInfo(currentElement)}>
+              <Box >
+                <Text> {currentElement['new_video_name']} </Text>
+                <Image src={currentElement['thumbnail']}/>
         
-            </Box>
+              </Box>
+            </Link>
           ))}
           </SimpleGrid> 
         </Box>
-        { showBox ? <PreviewBox/> : null }
-       
+        { videoSrcInfo ? <PreviewBox/> : null }
       </HStack>
     </Box>
     
 
   )
 }
+/**
+ * The getServerSideProps function is called on the server-side, and it returns an object with a props
+ * property that contains the data that will be passed to the component.
+ * @param context - An object with the following properties:
+ * @returns The props object is being returned.
+ */
 
 export async function getServerSideProps(context) {
- 
   let res = await fetch("http://localhost:3005/api/infovideos", {
     method: "GET",
     headers: {
@@ -117,6 +159,5 @@ export async function getServerSideProps(context) {
   return {
       props: { metadata },
   };
-
-  
 }
+
