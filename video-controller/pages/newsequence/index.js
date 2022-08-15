@@ -1,7 +1,46 @@
 import {Box,HStack,Button,Center,Image, Text, Link, VStack} from '@chakra-ui/react'
 import Header from '../../styles/header'
+import { useState,useRef, useEffect } from 'react'
+import React from 'react';
 
-export default function newsequence() {
+export default function newsequence({metadata,seqvideos}) {
+  
+  const [tmpFullSeq, setTmpFullSeq] = React.useState(metadata[0]['video_names']);
+  const [tmpSeq,setTmpSeq] =React.useState(seqvideos[0]['video_names']);
+  const [fullSeq,setFullSeq] = React.useState([]);
+ 
+  useEffect(()=>{
+    setFullSeq([...tmpFullSeq,...tmpSeq])
+  }, [tmpFullSeq,tmpSeq])
+
+  console.log(fullSeq);
+
+
+  let saveForLater = async (e)=>{
+      let dres = await fetch("http://localhost:3005/api/fullseq", {
+        method: "DELETE",
+      });
+      dres = await dres.json();
+
+      let tres = await fetch("http://localhost:3005/api/tmp", {
+        method: "DELETE",
+      });
+      tres = await tres.json();
+ 
+     
+      let res = await fetch("http://localhost:3005/api/fullseq", {
+      method: "POST",
+      body: JSON.stringify({
+        video_names: fullSeq,
+      }),
+    });
+    res = await res.json();
+    
+    
+  }
+  
+  
+
   return (
     <Box>
       <Header title ={"New Sequence"}/>
@@ -26,7 +65,7 @@ export default function newsequence() {
         </Box>
     
       <VStack >
-        <Link href='/choosevideo'>
+        <Link href='/choosevideo' onClick={saveForLater}>
           <Button width="200px" height="60px" bg="#E4DED2">
             <Image borderRadius ="10px" src = "images/add.png" w="30px" mr="5%" />
             <Text>Add Videos</Text>
@@ -44,7 +83,7 @@ export default function newsequence() {
       
       <Center mt="1%">
   
-        <Box borderRadius ="10px" bg="#E4DED2" minW="95%" minH="90%" overflow="auto" css={{ 
+        <Box borderRadius ="10px" bg="#E4DED2" minW="95%" minH="90%" overflow="auto"  css={{ 
                 '&::-webkit-scrollbar': 
                 { width: '1px', },
                 '&::-webkit-scrollbar-track': {
@@ -56,22 +95,11 @@ export default function newsequence() {
                 },
                 }} >
           <Text  fontSize="25px" textColor={"#405F73"}  ml="2%">Sequence</Text>
-          <HStack m="1%" spacing={5}>
+          <HStack m="1%" spacing={5} >
             <Text  fontSize="25px" textColor={"#405F73"}  ml="2%" >1</Text>
             <Image borderRadius ="10px" src = "images/thumbnail.png" w="10%"  />
             <Image src = "images/arrows.png" width="50px" m="2" />
-
-            <Text  fontSize="25px" textColor={"#405F73"}  ml="2%" >2</Text>
-            <Image borderRadius ="10px" src = "images/thumbnail.png" w="10%"  />
-            <Image src = "images/arrows.png" width="50px" m="2" />
-
-            <Text  fontSize="25px" textColor={"#405F73"}  ml="2%" >3</Text>
-            <Image borderRadius ="10px" src = "images/thumbnail.png" w="10%"  />
-            <Image src = "images/arrows.png" width="50px" m="2" />
-            
-
-            <Text  fontSize="25px" textColor={"#405F73"}  ml="2%" >4</Text>
-            
+              
           </HStack>
         
         </Box>
@@ -82,3 +110,31 @@ export default function newsequence() {
 
   )
 }
+//aqui tem de ir o get da fullseq (atualizado cada vez que abre a pag)
+export async function getServerSideProps(context) {
+  
+
+  let res = await fetch("http://localhost:3005/api/fullseq", {
+    method: "GET",
+    headers: {
+        "Content-Type": "application/json",
+    },
+  });
+  
+  let metadata = await res.json();
+
+  let ures= await fetch("http://localhost:3005/api/tmp",{
+    method: "GET",
+      headers: {
+          "Content-Type": "application/json",
+      },
+  });
+
+  let seqvideos = await ures.json(); 
+ 
+
+  return {
+      props: { metadata,seqvideos },
+  };
+}
+

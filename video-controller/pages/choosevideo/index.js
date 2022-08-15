@@ -104,7 +104,7 @@ export default function choosevideo({metadata}) {
       <HStack>
         <ButtonSmall title={"Filters"} icon ={"images/lupa.png"} />
         <Box bg="#E4DED2" borderRadius ="10px"  p="0.5%" w="100%" h="90px"> 
-        { seqVideos.length==3 ? <Link onClick={submitSeq}><ButtonSmall title={"Submit"} icon ={"images/add.png"} /></Link> : null}
+        { seqVideos.length==3 ? <Link onClick={submitSeq} href='/newsequence'><ButtonSmall title={"Submit"} icon ={"images/add.png"} /></Link> : null}
         
         </Box>
       </HStack>

@@ -3,11 +3,40 @@ import { useState,useRef } from 'react'
 import React from 'react';
 import Header from '../../styles/header'
 
+import ButtonSmall from '../../styles/buttonSmall';
 
 export default function chooseimage({metadata}) {
   const [imgSrc,setImgSrc] = React.useState(null);
-  const videoRef = useRef(null);
+  const [seqImg,setSeqImg] = React.useState([]);
  
+  const updateList = (imgName)=>{
+    setSeqImg(seqImg.filter(index=> index !== imgName ))
+  }
+  
+  console.log(seqImg);
+  
+  const ShowButton =(e) => {
+    return( 
+    <Link onClick={(e)=>setSeqImg([...seqImg,imgSrc])} >
+      <Box bg="#405F73" borderRadius ="90%" p="1%" width="50px" height="50px" verticalAlign="center" >
+        <Image src = {'images/check.png'}   />
+      </Box>
+    </Link>
+    )
+  }
+  let  submitSeq = async (e) => {
+
+    let res = await fetch("http://localhost:3005/api/tmpimages", {
+      method: "POST",
+      body: JSON.stringify({
+        imgnames: seqImg,
+      }),
+      headers:{'Content-Type':'application/json'}
+    });
+    res = await res.json();
+  
+}
+
 
   const PreviewBox = (e) =>  {
     return( 
@@ -18,9 +47,10 @@ export default function chooseimage({metadata}) {
         </Center>
         <HStack>
           <Box mt="2%">
-            <Link >
-              <Box bg="#405F73" borderRadius ="90%" p="1%" width="50px" height="50px" verticalAlign="center"  >
-                <Image src = {'images/check.png'}   />
+            { seqImg.length<3 ? <ShowButton/> : <Text>No more space</Text>}  
+            <Link onClick={(e)=>updateList(imgSrc)} >
+              <Box bg="#405F73" borderRadius ="90%" p="1%" width="50px" height="50px" verticalAlign="center" >
+                <Image src = {'images/play-button.png'}   />
               </Box>
             </Link>
           </Box>
@@ -36,6 +66,9 @@ export default function chooseimage({metadata}) {
         <Box bg="#E4DED2" borderRadius ="10px"  p="0.5%" w="100%" h="100px">
             <Text textAlign={"center"}>Question: This object was touched by a healthy or unhealthy person? </Text>
             <Image src={"http://localhost:8085/download_content/images/Image1.png"}  maxH="75%"/>
+            <Box bg="#E4DED2" borderRadius ="10px"  p="0.5%" w="100%" h="90px"> 
+              { seqImg.length==3 ? <Link onClick={submitSeq} href='/newsequence'><ButtonSmall title={"Submit"} icon ={"images/add.png"} /></Link> : null}
+            </Box>
         </Box>
       </HStack>
       <HStack mt="1%">
