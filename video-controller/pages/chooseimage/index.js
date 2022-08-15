@@ -29,7 +29,7 @@ export default function chooseimage({metadata}) {
     let res = await fetch("http://localhost:3005/api/tmpimages", {
       method: "POST",
       body: JSON.stringify({
-        imgnames: seqImg,
+        img_names: seqImg,
       }),
       headers:{'Content-Type':'application/json'}
     });

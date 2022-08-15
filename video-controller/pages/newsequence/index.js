@@ -3,15 +3,57 @@ import Header from '../../styles/header'
 import { useState,useRef, useEffect } from 'react'
 import React from 'react';
 
-export default function newsequence({metadata,seqvideos}) {
+export default function newsequence({metadata,seqvideos,seqimages}) {
   
-  const [tmpFullSeq, setTmpFullSeq] = React.useState(metadata[0]['video_names']);
-  const [tmpSeq,setTmpSeq] =React.useState(seqvideos[0]['video_names']);
+  const [tmpFullSeq, setTmpFullSeq] = React.useState([]);
+  const [tmpSeq,setTmpSeq] =React.useState([]);
+  const [tmpSeqImg, setTmpSeqImg] = React.useState([]);
   const [fullSeq,setFullSeq] = React.useState([]);
  
+ /* Setting the state of tmpFullSeq to the value of metadata[0]['video_names'] */
   useEffect(()=>{
-    setFullSeq([...tmpFullSeq,...tmpSeq])
+    if(metadata.length === 0){
+      setTmpFullSeq([]);
+    }
+    else{
+      setTmpFullSeq(metadata[0]['video_names'])
+    }
+  }, [metadata])
+
+  /* Setting the state of tmpSeq to the value of seqvideos[0]['video_names'] */
+  useEffect(()=>{
+    if(seqvideos.length === 0){
+      setTmpSeq([])
+    }else{
+      setTmpSeq(seqvideos[0]['video_names'])
+    }
+  },[seqvideos])
+  
+  /* Setting the state of tmpSeqImg to the value of seqimages[0]['img_names'] */
+  useEffect(()=>{
+    if(seqimages.length === 0){
+      setTmpSeqImg([])
+    }else{
+      setTmpSeqImg(seqimages[0]['img_names'])
+    }
+  },[seqimages])
+
+  console.log(tmpSeqImg);
+
+  /* Setting the state of fullSeq to the value of tmpFullSeq and tmpSeq. */
+  useEffect(()=>{
+    if(tmpSeq.length !==0){
+      setFullSeq([...tmpFullSeq,...tmpSeq])
+    }
+    
   }, [tmpFullSeq,tmpSeq])
+
+  /* Setting the state of fullSeq to the value of tmpFullSeq and tmpSeqImg. */
+  useEffect(()=>{
+    if(tmpSeqImg.length !==0){
+      setFullSeq([...tmpFullSeq,...tmpSeqImg])
+    }
+  }, [tmpFullSeq,tmpSeqImg])
 
   console.log(fullSeq);
 
@@ -26,7 +68,11 @@ export default function newsequence({metadata,seqvideos}) {
         method: "DELETE",
       });
       tres = await tres.json();
- 
+
+      let ires = await fetch("http://localhost:3005/api/tmpimages", {
+        method: "DELETE",
+      });
+      ires = await ires.json();
      
       let res = await fetch("http://localhost:3005/api/fullseq", {
       method: "POST",
@@ -71,7 +117,7 @@ export default function newsequence({metadata,seqvideos}) {
             <Text>Add Videos</Text>
           </Button>
         </Link>
-        <Link href='/chooseimage'>
+        <Link href='/chooseimage' onClick={saveForLater}>
           <Button width="200px" height="60px" bg="#E4DED2">
             <Image borderRadius ="10px" src = "images/add.png" w="30px" mr="5%" />
             <Text>Add Image</Text>
@@ -131,10 +177,20 @@ export async function getServerSideProps(context) {
   });
 
   let seqvideos = await ures.json(); 
+  
+  let ires= await fetch("http://localhost:3005/api/tmpimages",{
+    method: "GET",
+      headers: {
+          "Content-Type": "application/json",
+      },
+  });
+
+  let seqimages= await ires.json(); 
+ 
  
 
   return {
-      props: { metadata,seqvideos },
+      props: { metadata,seqvideos,seqimages },
   };
 }
 
