@@ -1,4 +1,4 @@
-import {Box,HStack,Button,Center,Image, Text, Link, VStack} from '@chakra-ui/react'
+import {Box,HStack,Button,Center,Image, Text, Link, VStack,Input} from '@chakra-ui/react'
 import Header from '../../styles/header'
 import { useState,useRef, useEffect } from 'react'
 import React from 'react';
@@ -9,7 +9,8 @@ export default function newsequence({metadata,seqvideos,seqimages}) {
   const [tmpSeq,setTmpSeq] =React.useState([]);
   const [tmpSeqImg, setTmpSeqImg] = React.useState([]);
   const [fullSeq,setFullSeq] = React.useState([]);
- 
+  const [seqName, setSeqName] = React.useState("");
+
  /* Setting the state of tmpFullSeq to the value of metadata[0]['video_names'] */
   useEffect(()=>{
     if(metadata.length === 0){
@@ -38,7 +39,6 @@ export default function newsequence({metadata,seqvideos,seqimages}) {
     }
   },[seqimages])
 
-  console.log(tmpSeqImg);
 
   /* Setting the state of fullSeq to the value of tmpFullSeq and tmpSeq. */
   useEffect(()=>{
@@ -55,24 +55,12 @@ export default function newsequence({metadata,seqvideos,seqimages}) {
     }
   }, [tmpFullSeq,tmpSeqImg])
 
+  console.log("aqui");
   console.log(fullSeq);
 
 
   let saveForLater = async (e)=>{
-      let dres = await fetch("http://localhost:3005/api/fullseq", {
-        method: "DELETE",
-      });
-      dres = await dres.json();
-
-      let tres = await fetch("http://localhost:3005/api/tmp", {
-        method: "DELETE",
-      });
-      tres = await tres.json();
-
-      let ires = await fetch("http://localhost:3005/api/tmpimages", {
-        method: "DELETE",
-      });
-      ires = await ires.json();
+      
      
       let res = await fetch("http://localhost:3005/api/fullseq", {
       method: "POST",
@@ -81,11 +69,26 @@ export default function newsequence({metadata,seqvideos,seqimages}) {
       }),
     });
     res = await res.json();
-    
-    
+    console.log(fullSeq);
   }
-  
-  
+
+  let saveDatabase = async (e)=>{
+
+    
+    let res = await fetch("http://localhost:3005/api/sequences", {
+    method: "POST",
+    body: JSON.stringify({
+      seq_name: seqName,
+      sequence: fullSeq,
+    }),
+  });
+  res = await res.json();
+  console.log(fullSeq);
+  setTmpSeq([]);
+  setTmpFullSeq([]);
+  setFullSeq([]);
+  setSeqName("");
+}
 
   return (
     <Box>
@@ -93,6 +96,7 @@ export default function newsequence({metadata,seqvideos,seqimages}) {
       <HStack ml="5%">
         <Box  borderRadius ="10px" bg="#E4DED2"  minW="45%"maxW="25%" maxH="60%" mr="20%" >
           <Text align={"center"} fontSize="25px" textColor={"#405F73"}>State of the Sequence</Text>
+          <Input bg="#E4DED2" borderRadius ="10px"w="300px" placeholder='Name of the sequence' _placeholder={{ opacity: 0.9, color: '#405F73' }} value={seqName}  onChange={(e)=> setSeqName(e.target.value)}/>
           <Box borderRadius ="10px" m="2.5%" maxW="95%"
               as='video'
               controls
@@ -104,9 +108,12 @@ export default function newsequence({metadata,seqvideos,seqimages}) {
               }}
           />
           <Box w="100%" align={'center'} mb="10px">
-            <Button width="100px" height="40px" bg="#405F73">
-              <Text textColor={"#E4DED2"} >FINISH</Text>
-            </Button>
+            <Link onClick={saveDatabase} href = '/sequences'>
+              <Button  width="100px" height="40px" bg="#405F73">
+                <Text textColor={"#E4DED2"} >FINISH</Text>
+              </Button>
+            </Link>
+            
           </Box>
         </Box>
     
@@ -169,14 +176,22 @@ export async function getServerSideProps(context) {
   
   let metadata = await res.json();
 
+  let dres = await fetch("http://localhost:3005/api/fullseq", {
+        method: "DELETE",
+      });
+
   let ures= await fetch("http://localhost:3005/api/tmp",{
     method: "GET",
       headers: {
           "Content-Type": "application/json",
       },
   });
+  let seqvideos = await ures.json();
+  let tres = await fetch("http://localhost:3005/api/tmp", {
+    method: "DELETE",
+  });
 
-  let seqvideos = await ures.json(); 
+   
   
   let ires= await fetch("http://localhost:3005/api/tmpimages",{
     method: "GET",
@@ -184,8 +199,12 @@ export async function getServerSideProps(context) {
           "Content-Type": "application/json",
       },
   });
-
   let seqimages= await ires.json(); 
+  let sres = await fetch("http://localhost:3005/api/tmpimages", {
+        method: "DELETE",
+   });
+    
+  
  
  
 

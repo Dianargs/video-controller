@@ -10,7 +10,7 @@ export default async function handler(req,res) {
             break;
         case "GET":
           const participant = await db.collection("ImmediateMemoryTest").find({}).toArray();
-          res.json({status: 200, data: participant });
+          res.json( participant );
           break;
       }
   }

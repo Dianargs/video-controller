@@ -17,8 +17,8 @@ export default function Home() {
         <Link href='/addimage'>
           <Button title={"Add New Image"} icon ={"images/addImage.png"}/>
         </Link>
-        <Link href='/newsequence'>
-          <Button title={"New Sequence"} icon ={"images/newsequenceIcon.png"}/>
+        <Link href='/sequences'>
+          <Button title={"Sequences"} icon ={"images/newsequenceIcon.png"}/>
         </Link>
         <Link href='/playsequence'>
           <Button title={"Start Experiment"} icon ={"images/editSequenceIcon.png"}/>
