@@ -1,4 +1,4 @@
-import {Box,Text,Image,SimpleGrid, Link, HStack, Center,Popover,
+import {Box,Text,Image,SimpleGrid, Link,VStack,HStack, Center,Popover,
   PopoverTrigger,
   PopoverContent,
   PopoverHeader,
@@ -6,26 +6,38 @@ import {Box,Text,Image,SimpleGrid, Link, HStack, Center,Popover,
   PopoverFooter,
   PopoverArrow,
   PopoverCloseButton,
-  PopoverAnchor, UnorderedList,ListItem,Button,AspectRatio, Img} from '@chakra-ui/react'
+  PopoverAnchor,Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton, useDisclosure,UnorderedList,ListItem,Button,AspectRatio, Img,CheckboxGroup,Checkbox, filter} from '@chakra-ui/react'
 import { useState,useRef, useEffect } from 'react'
 import React from 'react';
 import Header from '../../styles/header'
 import ButtonSmall from '../../styles/buttonSmall';
 
 
-export default function choosevideo({metadata}) {
+export default function choosevideo({metadata,filters}) {
   const [videoSrcInfo,setVideoSrcInfo] = React.useState(null);
   const [videoSrc,setVideoSrc] = React.useState(null);
   const [seqVideos, setSeqVideos] = React.useState([]);
- 
+  const [filterState, setFilterState] = React.useState(filters);
+  const [tags, setTags] = React.useState([])
+  const [met,setMet] = React.useState(metadata)
   const videoRef = useRef(null);
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
-  console.log(seqVideos.length);
+  useEffect(()=>{
+    setMet(met)
+  }, [met])
 
   const updateList = (videoName)=>{
     setSeqVideos(seqVideos.filter(index=> index !== videoName ))
   }
 
+  
   const ShowButton =(e) => {
     return( 
     <Link onClick={(e)=>setSeqVideos([...seqVideos,videoSrcInfo['new_video_name']])} >
@@ -98,11 +110,71 @@ export default function choosevideo({metadata}) {
       </Box>
     )
 } 
+  const FilterButton = (e) => {
+    return(
+      <>
+      <Button onClick={onOpen}>Open Modal</Button>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Filters:</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+          <VStack id="checkboxDiv" align={'left'} >
+            <CheckboxGroup  value={tags} onChange={(e)=>{setTags(e)}}>
+              {filterState.map((currentElement, index) => (
+                <Checkbox  value={currentElement.name} key={index} borderColor="#405F73">{currentElement.name}</Checkbox>
+              ))}
+            </CheckboxGroup>
+          </VStack>
+          </ModalBody>
+
+          <ModalFooter>
+            <Link onClick={updateVideos}>
+              <Button colorScheme='blue' mr={3} onClick={onClose}>
+                Done
+              </Button>
+            </Link>
+            <Button colorScheme='blue' mr={3} onClick={onClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
+      
+    )
+  }
+  const updateVideos = async (e) =>{
+    let str ="";
+    tags.map((cur,i)=>{
+      if(i==0){
+        str ="filter="+cur;
+      }else{str = str + "&filter="+cur;}
+      
+    })
+    let res = await fetch("http://localhost:3005/api/infovideos?"+str, {
+      method: "GET",
+      headers: {
+          "Content-Type": "application/json",
+      },
+    }); 
+    setMet(await res.json());
+    //setMet(await res.json()) ;
+   
+    
+  }
+
+
+
+
   return (
     <Box>
       <Header title ={"Choose Video"}/>
       <HStack>
-        <ButtonSmall title={"Filters"} icon ={"images/lupa.png"} />
+        <FilterButton/>
+        
         <Box bg="#E4DED2" borderRadius ="10px"  p="0.5%" w="100%" h="90px"> 
         { seqVideos.length==3 ? <Link onClick={submitSeq} href='/newsequence'><ButtonSmall title={"Submit"} icon ={"images/add.png"} /></Link> : null}
         
@@ -121,7 +193,7 @@ export default function choosevideo({metadata}) {
                 },}} >
           <SimpleGrid columns={3} spacing={2} ml="1%">     
             
-          {metadata.map((currentElement, index) => (
+          {met.map((currentElement, index) => (
             <Link onClick={(e)=>setVideoSrcInfo(currentElement)}>
               <Box >
                 <Text> {currentElement['new_video_name']} </Text>
@@ -156,8 +228,16 @@ export async function getServerSideProps(context) {
   
   let metadata = await res.json();
 
+  let fres = await fetch("http://localhost:3005/api/filtertags", {
+      method: "GET",
+      headers: {
+          "Content-Type": "application/json",
+      },
+  });
+  let filters = await fres.json();
+  
   return {
-      props: { metadata },
+      props: { metadata, filters },
   };
 }
 

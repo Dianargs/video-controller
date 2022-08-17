@@ -6,8 +6,7 @@ export default async function handler(req,res) {
 
     switch(req.method) {
         case "POST":            
-            console.log(req.body)
-            console.log(typeof req.body)
+           
             let newTmp = await db.collection("tmp").insertOne(req.body);
             res.json({status: 200});
             break;

@@ -55,8 +55,7 @@ export default function newsequence({metadata,seqvideos,seqimages}) {
     }
   }, [tmpFullSeq,tmpSeqImg])
 
-  console.log("aqui");
-  console.log(fullSeq);
+ 
 
 
   let saveForLater = async (e)=>{
@@ -69,7 +68,7 @@ export default function newsequence({metadata,seqvideos,seqimages}) {
       }),
     });
     res = await res.json();
-    console.log(fullSeq);
+   
   }
 
   let saveDatabase = async (e)=>{
@@ -83,7 +82,7 @@ export default function newsequence({metadata,seqvideos,seqimages}) {
     }),
   });
   res = await res.json();
-  console.log(fullSeq);
+ 
   setTmpSeq([]);
   setTmpFullSeq([]);
   setFullSeq([]);

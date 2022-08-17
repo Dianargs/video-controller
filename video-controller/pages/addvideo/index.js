@@ -18,7 +18,7 @@ export default function addvideo({filters}) {
   const videoRef = useRef(null)
   const imagemRef = useRef(null)
  
-  console.log(filters);
+
   
   /* A react hook that is called when the component is mounted. It is used to set the state of the
   component. */

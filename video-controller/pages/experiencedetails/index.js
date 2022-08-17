@@ -1,4 +1,4 @@
-import {Box,HStack, Link,Text, VStack,Textarea} from '@chakra-ui/react'
+import {Box,HStack, Link,Text, VStack,Textarea,AspectRatio} from '@chakra-ui/react'
 import React from 'react';
 import  Button from '../../styles/button.js'
 import Header from '../../styles/header.js'
@@ -10,8 +10,13 @@ export default function Home() {
         <Header title ={"Details about the experience"}/>
         <HStack>
           <VStack width="300px" mr="10%">
-            <Text mt="3%" ml="10%" color={"#E4DED2"} fontSize="28px">Video playing now:</Text>
-            <Text mt="3%" ml="10%"color={"#E4DED2"}  fontSize="28px">Video123</Text>
+          
+            <iframe
+              title='oculus'
+              src='https://www.oculus.com/casting'
+              allowFullScreen
+            />
+        
           </VStack>
           <VStack>
             <Text mt="3%" color={"#E4DED2"}  fontSize="28px">Image showing:</Text>

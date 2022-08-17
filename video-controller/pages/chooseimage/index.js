@@ -13,7 +13,7 @@ export default function chooseimage({metadata}) {
     setSeqImg(seqImg.filter(index=> index !== imgName ))
   }
   
-  console.log(seqImg);
+  
   
   const ShowButton =(e) => {
     return( 
