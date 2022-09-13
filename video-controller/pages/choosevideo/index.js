@@ -40,11 +40,13 @@ export default function choosevideo({metadata,filters}) {
   
   const ShowButton =(e) => {
     return( 
-    <Link onClick={(e)=>setSeqVideos([...seqVideos,videoSrcInfo['new_video_name']])} >
-      <Box bg="#405F73" borderRadius ="90%" p="1%" width="50px" height="50px" verticalAlign="center" >
-        <Image src = {'images/check.png'}   />
-      </Box>
-    </Link>
+  
+      <Link onClick={(e)=>setSeqVideos([...seqVideos,videoSrcInfo['new_video_name']])}>
+        <Button bg="#ffffff" textColor={'#6980e0'} fontSize={"17px"} borderRadius ="10px" textAlign="center" p="2px"  width="190px" height="60px" verticalAlign="center" border={"2px solid #2b468b" }>
+          <Image borderRadius ="10px" src = "images/check-mark.png" w="30px" mr="2%" />
+          <Text>Add to the List</Text>
+        </Button>
+      </Link>
     )
   }
 
@@ -65,23 +67,27 @@ export default function choosevideo({metadata,filters}) {
     
     return( 
 
-      <Box bg="#E4DED2" borderRadius ="10px"  p="1%" minW="50%" h="520px"  >
-        <Text  fontSize="25px" textColor={"#405F73"} >{videoSrcInfo['new_video_name']}</Text>
+      <Box bg="#bbcdff" borderRadius ="10px"  p="1%" minW="50%" h="520px"  >
+        <Text  fontSize="25px" textColor={"#2b468b"} >{videoSrcInfo['new_video_name']}</Text>
         <AspectRatio maxH="50%" ratio={16 / 9}>
               <video
                 id="video-summary"
                 tag={"video/mp4"}
                 ref={videoRef}
                 controls
-                src={"http://localhost:8085/download_content/videos/"+videoSrcInfo['new_video_name']}
+                src={"http://192.168.0.100:8085/download_content/videos/"+videoSrcInfo['new_video_name']}
               />
           </AspectRatio>
-        <Text  textAlign="center" fontSize="20px" textColor={"#405F73"} >{videoSrcInfo['video_info']}</Text>
-        <HStack>
+        <Text  textAlign="center" fontSize="20px" textColor={"#2b468b"} >{videoSrcInfo['video_info']}</Text>
+       
           <Box>
             <Popover >
               <PopoverTrigger>
-                <Button bg='#405F73' textColor={"#E4DED2"}>Show Tags</Button>
+              <Link >
+                <Button bg="#ffffff" textColor={'#6980e0'} fontSize={"17px"} borderRadius ="10px" textAlign="center" p="2px"  width="200px" height="60px" verticalAlign="center" border={"2px solid #2b468b" }>
+                  <Text>Show Filters</Text>
+                </Button>
+              </Link>
               </PopoverTrigger>
               <PopoverContent>
                 <PopoverArrow />
@@ -97,13 +103,14 @@ export default function choosevideo({metadata,filters}) {
               </PopoverContent>
             </Popover>    
           </Box>
-          
+          <HStack mt="1%" >
           <Box >
-            { seqVideos.length<3 ? <ShowButton/> : <Text>No more space</Text>}  
-            <Link onClick={(e)=>updateList(videoSrcInfo['new_video_name'])} >
-              <Box bg="#405F73" borderRadius ="90%" p="1%" width="50px" height="50px" verticalAlign="center" >
-                <Image src = {'images/play-button.png'}   />
-              </Box>
+            { seqVideos.length<3 ? <ShowButton/> : <Text textColor={"#2b468b"}>No more space</Text>}  
+            <Link onClick={(e)=>updateList(videoSrcInfo['new_video_name'])}   >
+              <Button bg="#ffffff"  textColor={'#6980e0'}  fontSize={"15px"} borderRadius ="10px" textAlign="center" p="2px"  width="190px" height="60px" verticalAlign="center" border={"2px solid #2b468b" }>
+                <Image borderRadius ="10px" src = "images/cancel.png" w="30px" mr="2%" />
+                <Text>Remove from the list</Text>
+              </Button>
             </Link>
           </Box>
         </HStack>
@@ -113,8 +120,12 @@ export default function choosevideo({metadata,filters}) {
   const FilterButton = (e) => {
     return(
       <>
-      <Button onClick={onOpen}>Open Modal</Button>
-
+      <Link onClick={onOpen} >
+        <Button bg="#ffffff" textColor={'#6980e0'} fontSize={"18px"} borderRadius ="10px" textAlign="center" p="2px"  width="200px" height="60px" verticalAlign="center" border={"4px solid #bbcdff" }>
+          <Image borderRadius ="10px" src = "images/search.png" w="30px" mr="10%" />
+          <Text>Filters</Text>
+        </Button>
+      </Link>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -132,11 +143,11 @@ export default function choosevideo({metadata,filters}) {
 
           <ModalFooter>
             <Link onClick={updateVideos}>
-              <Button colorScheme='blue' mr={3} onClick={onClose}>
+              <Button bg="#ffffff" textColor={'#6980e0'} fontSize={"18px"} borderRadius ="10px" textAlign="center" p="2px"  width="100px" height="60px" verticalAlign="center" border={"4px solid #bbcdff" } mr={3} onClick={onClose}>
                 Done
               </Button>
             </Link>
-            <Button colorScheme='blue' mr={3} onClick={onClose}>
+            <Button bg="#ffffff" textColor={'#6980e0'} fontSize={"18px"} borderRadius ="10px" textAlign="center" p="2px"  width="100px" height="60px" verticalAlign="center" border={"4px solid #bbcdff" } mr={3} onClick={onClose}>
               Close
             </Button>
           </ModalFooter>
@@ -175,13 +186,13 @@ export default function choosevideo({metadata,filters}) {
       <HStack>
         <FilterButton/>
         
-        <Box bg="#E4DED2" borderRadius ="10px"  p="0.5%" w="100%" h="90px"> 
-        { seqVideos.length==3 ? <Link onClick={submitSeq} href='/newsequence'><ButtonSmall title={"Submit"} icon ={"images/add.png"} /></Link> : null}
+        <Box bg="#bbcdff" borderRadius ="10px"  p="0.5%" w="100%" h="90px"> 
+        { seqVideos.length==3 ? <Link onClick={submitSeq} href='/newsequence'><ButtonSmall title={"Submit"} icon ={"images/plus.png"} /></Link> : null}
         
         </Box>
       </HStack>
       <HStack mt="1%">
-        <Box bg="#E4DED2" borderRadius ="10px"  p="0.5%" maxW="50%" h="520px" overflow="auto" css={{ 
+        <Box bg="#bbcdff" borderRadius ="10px"  p="0.5%" maxW="50%" h="520px" overflow="auto" css={{ 
                 '&::-webkit-scrollbar': 
                 { width: '1px', },
                 '&::-webkit-scrollbar-track': {
@@ -196,9 +207,8 @@ export default function choosevideo({metadata,filters}) {
           {met.map((currentElement, index) => (
             <Link onClick={(e)=>setVideoSrcInfo(currentElement)}>
               <Box >
-                <Text> {currentElement['new_video_name']} </Text>
+                <Text textColor={"#2b468b"}> {currentElement['new_video_name']} </Text>
                 <Image src={currentElement['thumbnail']}/>
-        
               </Box>
             </Link>
           ))}

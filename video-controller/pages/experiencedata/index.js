@@ -35,16 +35,21 @@ export default function experiencedata() {
     }
       return (
     <Box >
-        <Link onClick={(e) => handleAction('DOWNLOAD')}>
-            <Button type="button" className="btn btn-outline-sysmode btn-sm" title={"Download"}></Button>
-        </Link>
-        <CSVLink 
-            data={dataForDownload} 
-            filename="data.csv"
-            className="hidden"
-            ref={csvLink}
-            target="_blank" />
+        <Header title ={"Analyse Data"}/>
+        <Box ml="18%" mt="20%">
+             <Link onClick={(e) => handleAction('DOWNLOAD')} >
+                <Button type="button"  className="btn btn-outline-sysmode btn-sm" title={"Download"}></Button>
+            </Link>
+            <CSVLink 
+                data={dataForDownload} 
+                filename="data.csv"
+                className="hidden"
+                ref={csvLink}
+                target="_blank" />
+        </Box>
+            
     
+      
        
     </Box>
   )

@@ -111,7 +111,7 @@ export default function addvideo({filters}) {
       <Header title ={"Add Video"}/>
       <form onSubmit={submitForm}>
         <Center>
-          <HStack mt="1%" ml="5%" spacing={10} >
+          <HStack ml="5%" spacing={10} >
             <Button class="file-input" _hover={{transform: 'scale(1.02)'}} _focus={{transform: 'scale(1.02)'}} style={
               {
                 display: 'block',
@@ -119,15 +119,15 @@ export default function addvideo({filters}) {
                 width: '200px',
                 height: '60px',
                 'border-radius': '10px',
-                background: '#E4DED2',
-                'box-shadow': '0 4px 7px rgba(0, 0, 0, 0.4)',
+                background: '#ffffff',
                 display: 'flex',
                 'align-items': 'center',
                 'justify-content': 'center',
                 color: '#fff',
                 'font-weight': 'bold',
                 cursor: 'pointer',
-                transition: 'transform .2s ease-out',  
+                transition: 'transform .2s ease-out',
+                border:'4px solid #bbcdff'  
             }
             }>
               <input type="file" name="file"  onChange={(e) => setSelectedFile(e.target.files[0])} style={
@@ -138,15 +138,15 @@ export default function addvideo({filters}) {
                     position: 'absolute', 
                 } 
               }/>
-              <Image src = "images/addVideoIcon.png" width="40px"  mr="10px"/>
-              <label for="file" style={{ color:'#405F73'}}>Select file</label>
+              <Image src = "images/video.png" width="40px"  mr="10%"/>
+              <label for="file" style={{ color:'#6980e0'}}>Select video</label>
             </Button>
           </HStack>
         </Center>
     
         <Center>
           <HStack mt="2%"  spacing={10}>
-          <Box bg="lightgrey" marginBottom="1rem" w="700px" >
+          <Box bg="#ffffff" w="700px" >
             <AspectRatio maxH="50%" ratio={16 / 9}>
                 <video
                   id="video-summary"
@@ -156,17 +156,21 @@ export default function addvideo({filters}) {
                   src={videoSrc}
                 />
               </AspectRatio>
-              <Link onClick={(e) => capture()}>
-                <Button>
-                  Capture
+              <Link onClick={(e) => capture()} ml="35%">
+                <Button bg="#ffffff" textColor={'#6980e0'} borderRadius ="10px" textAlign="center" p="2px"  width="200px" height="60px" verticalAlign="center" border={"4px solid #bbcdff" } >
+                  Capture Thumbnail
                 </Button>
               </Link>
             </Box>
-            <Textarea bg="#E4DED2" borderRadius ="10px" h="370px" w="300px" placeholder='Add Details about the video here...' _placeholder={{ opacity: 0.9, color: '#405F73' }} value={infoVideo}  onChange={(e)=> setinfoVideo(e.target.value)} type ="text"/>
-            <VStack bg="#E4DED2" borderRadius="10px" align={'center'} w="20%" maxH="370px">
+            <VStack>
+              <Textarea bg="#bbcdff"  borderRadius ="10px" h="270px" w="320px" placeholder='Details about the video...' _placeholder={{ opacity: 0.9, color: '#6980e0' }} value={infoVideo}  onChange={(e)=> setinfoVideo(e.target.value)} type ="text"/>
+              <canvas ref={imagemRef} id="canvas" width={"320"} height="180" display="none"></canvas>
+            </VStack>
+            
+            <VStack bg="#bbcdff" borderRadius="10px" align={'center'} w="21%" maxH="370px">
               <HStack>
-                  <Input  bg={'white'} value={nameNewFilter}  onChange={(e)=> setnameNewFilter(e.target.value)} type ="text" ></Input>
-                  <Button onClick={addNewFilter} ><Image borderRadius ="10px" src = "images/add.png" w="20px"  /></Button>
+                  <Input  bg={'white'} value={nameNewFilter}  onChange={(e)=> setnameNewFilter(e.target.value)} type ="text" m="1%"></Input>
+                  <Button onClick={addNewFilter}bg={'white'} mr="3%"><Image borderRadius ="10px" src = "images/plus.png" w="30px"  /></Button>
               </HStack> 
               <Box w="90%" overflow="auto" css={{ 
                 '&::-webkit-scrollbar': 
@@ -182,7 +186,7 @@ export default function addvideo({filters}) {
                 <VStack id="checkboxDiv" align={'left'} >
                   <CheckboxGroup  value={tags} onChange={(e)=>{setTags(e)}}>
                     {filterState.map((currentElement, index) => (
-                      <Checkbox  value={currentElement.name} key={index} borderColor="#405F73">{currentElement.name}</Checkbox>
+                      <Checkbox  value={currentElement.name} key={index} borderColor="#6980e0" textColor={'#2b468b'}>{currentElement.name}</Checkbox>
                     ))}
                   </CheckboxGroup>
                 </VStack>
@@ -191,9 +195,9 @@ export default function addvideo({filters}) {
           </HStack>
         </Center>
         <Center mt ="1%">
-        <Button type="submit">Submit</Button>
+        <Button type="submit" bg="#ffffff" textColor={'#6980e0'} borderRadius ="10px" textAlign="center" width="200px" height="60px" verticalAlign="center" border={"4px solid #bbcdff" } fontSize={"20px"}>Submit</Button>
         </Center>
-        <canvas ref={imagemRef} id="canvas" width={"320"} height="180" display="none"></canvas>
+        
       </form>
     </Box>
   )

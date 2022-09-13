@@ -1,4 +1,4 @@
-import {Box,HStack, Link, Select, Input,Text, Center} from '@chakra-ui/react'
+import {Box,HStack, Link, Select, Input,Text, Center,Image} from '@chakra-ui/react'
 import { useState,useEffect } from 'react'
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -55,40 +55,33 @@ export default function playsequence({initialData, metadata}) {
   return (
     <Box>
       <Header title ={"Play Experience"}/>
-      <Center>
-        <HStack spacing={20} mt="1%">
-          <Select placeholder='Choose a Sequence' bg={"#E4DED2"} w="50%" ml={"5%"} value={optionSet} onChange={(e)=> setOption(e.target.value)}>
-            {seq.map((cur,index)=> (
-              <option value={cur['seq_name']}  >{cur['seq_name']}</option>
-            ))}
-          </Select>
-          <HStack >
-            <Text color={"#E4DED2"} >Date</Text>
-            <Input placeholder='Day' size='sm' w="11%" textAlign={'center'}></Input>
-            <Text color={"#E4DED2"} >- </Text>
-            <Input placeholder='Month' size='sm' w="12%" textAlign={'center'}></Input>
-            <Text color={"#E4DED2"} >- </Text>
-            <Input placeholder='Year' size='sm' w="12%" textAlign={'center'}></Input>
-          </HStack>
-        </HStack>
-      </Center>
-      <Text mt="1%" color={"#E4DED2"} textAlign={'center'} fontSize="28px">Participant Name:</Text>
-      <Center mt="1%">
-        <Input placeholder='ex: 1,2,3' _placeholder={{ opacity: 0.9, color: '#405F73' }} size='md' h="60px" w="200px"  bg="#E4DED2" value={partName}  onChange={(e)=> setPartName(e.target.value)} type ="text"/>
-      </Center>
+      <Box mt="1%">
+        <Select placeholder='Choose a Sequence'_placeholder={{ opacity: 0.9, color: '#6980e0' }} bg={"#bbcdff"} w="30%" ml={"10%"} value={optionSet} onChange={(e)=> setOption(e.target.value)}>
+          {seq.map((cur,index)=> (
+            <option value={cur['seq_name']}  >{cur['seq_name']}</option>
+          ))}
+        </Select>
+        
+      </Box>
+      <Text  ml={"18%"}  mt="1%" color={"#6980e0"} textAlign={'left'} fontSize="28px">Participant Name:</Text>
+      <Box  ml={"18%"}  mt="1%">
+        <Input placeholder='ex: 1,2,3' _placeholder={{ opacity: 0.9, color: '#6980e0' }} size='md' h="60px" w="200px"  bg="#bbcdff" value={partName}  onChange={(e)=> setPartName(e.target.value)} type ="text"/>
+      </Box>
       
 
-      <Center>
-        <HStack justify={'center'} verticalAlign={'center'} h='40vh' spacing={200}>
+      
+        <HStack ml={"5%"} justify={'left'} verticalAlign={'center'} h='40vh' spacing={200}>
             <Link  onClick={()=>getValue()}>
-              <Button title={"Play Training Period"} icon ={"images/experience.png"} />
+              <Image src ={"images/presentation.png"} width="90px" ml="25%" mb="2%" />
+              <Button title={"Play Training Period"}/>
             </Link>
             <Link onClick={()=>sendMessage("play;"+partName+";"+ getValue())} href='/experiencedetails' >
-              <Button  title={"Play Sequence"} icon ={"images/play-button.png"} />
+              <Image src ={"images/flow-chart.png"} width="90px" ml="25%" mb="2%" />
+              <Button  title={"Play Sequence"}/>
             </Link>
         </HStack>
-      </Center>
-    </Box>
+      </Box>
+    
   )
 }
 

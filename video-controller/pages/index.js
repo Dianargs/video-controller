@@ -1,29 +1,51 @@
 import Head from 'next/head'
-import Image from 'next/image'
+
 import styles from '../styles/Home.module.css'
 import  Button from '../styles/button.js'
-import Header from '../styles/header'
-import {Box,HStack,Link, Flex} from '@chakra-ui/react'
+import HomePageHeader from '../styles/headerhomepage.js'
+import {Box,HStack,Link, Flex,Image, VStack} from '@chakra-ui/react'
 
 
 export default function Home() {
   return (
-    <Box >
-      <Header title ={"Walking Down Memory Lane"}/>
-      <HStack justify={'center'} verticalAlign={'center'} mt="10%" spacing="200" >
-        <Link href='/addvideo'>
-          <Button title={"Add New Video"} icon ={"images/addVideoIcon.png"}/>
+    <Box>
+      <HomePageHeader title ={"Walking Down Memory Lane"}/>
+      
+      <HStack ml={"5%"} spacing="100" >
+        <VStack>
+        <Image src ={"images/video.png"} width="90px"  />
+        <Link href='/addvideo'>  
+          <Button title={"Add New Video"} />
         </Link>
+        </VStack>
+        <VStack >
         <Link href='/addimage'>
-          <Button title={"Add New Image"} icon ={"images/addImage.png"}/>
+          <Image src ={"images/gallery.png"} width="90px" ml="25%" mt="4%" />
+          <Button title={"Add New Image"} />
         </Link>
-        <Link href='/sequences'>
-          <Button title={"Sequences"} icon ={"images/newsequenceIcon.png"}/>
-        </Link>
-        <Link href='/playsequence'>
-          <Button title={"Start Experiment"} icon ={"images/editSequenceIcon.png"}/>
-        </Link>
+        </VStack>
       </HStack>
+      <HStack ml={"5%"} spacing="100" mt="1%">
+        <VStack>
+        <Link href='/sequences'>
+          <Image src ={"images/step.png"} width="90px" ml="25%" mb="2%" />
+          <Button title={"Sequences"} />
+        </Link>
+        </VStack>
+        <VStack>
+        <Link href='/playsequence'>
+          <Image src ={"images/flow-chart.png"} width="90px" ml="25%"  mb="2%" />
+          <Button title={"Start Experiment"} />
+        </Link>
+        </VStack>
+      </HStack>
+      <Flex justify={'left'} ml="5%">
+        <Link href='/experiencedata'>
+          <Image src ={"images/analysis.png"} width="90px" ml="25%"  mb="2%" />
+          <Button title={"Analyse Data"} />
+        </Link>
+      </Flex>
+      
     </Box>
   )
 }

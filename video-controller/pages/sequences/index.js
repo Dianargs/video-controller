@@ -30,19 +30,19 @@ export default function sequences({metadata}) {
   return (
     <Box>
       <Header title ={"Sequences"}/>
-      <HStack ml="5%">  
+      <HStack ml="4%">  
         <Link href='/newsequence' onClick={cleanHistory}>
-          <Button width="200px" height="60px" bg="#E4DED2">
-            <Image borderRadius ="10px" src = "images/add.png" w="30px" mr="5%" />
+          <Button bg="#ffffff" textColor={'#6980e0'} fontSize={"17px"} borderRadius ="10px" textAlign="center" p="2px"  width="200px" height="60px" verticalAlign="center" border={"4px solid #bbcdff" }>
+            <Image borderRadius ="10px" src = "images/plus.png" w="30px" mr="10%" />
             <Text>New Sequence</Text>
           </Button>
         </Link>
  
       </HStack>
       
-      <Center mt="1%">
+    
   
-        <Box borderRadius ="10px" bg="#E4DED2" minW="95%" minH="90%" overflow="auto"  css={{ 
+        <Box borderRadius ="10px" bg="#eaf3fa" mt="1%" ml="4%" minW="40%" maxW={"40%"} minH="90%" overflow="auto"  css={{ 
                 '&::-webkit-scrollbar': 
                 { width: '1px', },
                 '&::-webkit-scrollbar-track': {
@@ -53,15 +53,15 @@ export default function sequences({metadata}) {
                   borderRadius: '24px',
                 },
                 }} >
-          <Text  fontSize="25px" textColor={"#405F73"}  ml="2%">Sequences</Text>
+          <Text  fontSize="25px" textColor={"#2b468b"}  ml="2%">Existing Sequences</Text>
           <VStack m="1%" spacing={5} >
             {seq.map((cur,index) => (
-                <Text  fontSize="25px" textColor={"#405F73"}  ml="2%" >{cur['seq_name']}</Text>
+                <Text  fontSize="25px" textColor={"#6980e0"}  ml="2%" >{cur['seq_name']}</Text>
             ))}
             
           </VStack>
         </Box>
-      </Center>
+    
     </Box>
 
 

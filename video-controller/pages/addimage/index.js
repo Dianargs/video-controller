@@ -57,15 +57,15 @@ export default function addimage() {
                   width: '200px',
                   height: '60px',
                   'border-radius': '10px',
-                  background: '#E4DED2',
-                  'box-shadow': '0 4px 7px rgba(0, 0, 0, 0.4)',
+                  background: '#ffffff',
                   display: 'flex',
                   'align-items': 'center',
                   'justify-content': 'center',
                   color: '#fff',
                   'font-weight': 'bold',
                   cursor: 'pointer',
-                  transition: 'transform .2s ease-out',  
+                  transition: 'transform .2s ease-out',
+                  border:'4px solid #bbcdff'   
               }
               }>
               <input type="file" name="file"  onChange={(e) => setSelectedFile(e.target.files[0])} style={
@@ -76,21 +76,21 @@ export default function addimage() {
                     position: 'absolute', 
                 } 
               }/>
-              <Image src = "images/addImage.png" width="40px"  mr="10px"/>
-              <label for="file" style={{ color:'#405F73'}}>Select file</label>
+              <Image src = "images/gallery.png" width="40px"  mr="10px"/>
+              <label for="file" style={{ color:'#6980e0'}}>Select Image</label>
             </Button>
-            <Input placeholder='Object Name' _placeholder={{ opacity: 0.9, color: '#405F73' }} size='md' h="60px" w="500px"  bg="#E4DED2" value={nameImage}  onChange={(e)=> setNameImage(e.target.value)} type ="text" />
+            <Input placeholder='Image Name...' _placeholder={{ opacity: 0.9, color: '#6980e0' }} fontSize={"18px"} size='md' h="60px" w="500px"  bg="#bbcdff" value={nameImage}  onChange={(e)=> setNameImage(e.target.value)} type ="text" />
         </HStack>
         </Center>
         <Center>
         <Box bg="#E4DED2" borderRadius ="8px" marginBottom="1rem"  mt="1%" >
-               <Image src={imageSrc} maxH="450px"/>
+               <Image src={imageSrc} maxH="450px" />
         </Box>
         </Center>
        
        
         <Center mt ="1%">
-        <Button type="submit">Submit</Button>
+        <Button type="submit" bg="#ffffff" textColor={'#6980e0'} borderRadius ="10px" textAlign="center" width="200px" height="60px" verticalAlign="center" border={"4px solid #bbcdff" } fontSize={"20px"}>Submit</Button>
         </Center>
       </form>
      
