@@ -19,7 +19,7 @@ export default async function handler(req,res) {
                 const images = element['confSeq'].filter(element => element.includes(".PNG")); //filter images from seq array
                 const zip = (a, b) => a.map((k, i) => [k, b[i]]); // zip answers with images
                 delete element['_id'];
-                delete element['confSeq'];
+                //delete element['confSeq'];
                 element['quiz'] = zip(images, answers);
 
             }

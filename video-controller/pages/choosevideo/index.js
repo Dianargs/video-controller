@@ -24,24 +24,36 @@ export default function choosevideo({metadata,filters}) {
   const [videoSrc,setVideoSrc] = React.useState(null);
   const [seqVideos, setSeqVideos] = React.useState([]);
   const [filterState, setFilterState] = React.useState(filters);
+  const [infoVideo, setInfoVideo] = React.useState([]);
   const [tags, setTags] = React.useState([])
   const [met,setMet] = React.useState(metadata)
   const videoRef = useRef(null);
   const { isOpen, onOpen, onClose } = useDisclosure()
 
+
   useEffect(()=>{
     setMet(met)
   }, [met])
 
+  useEffect(()=>{
+    setInfoVideo(infoVideo)
+  }, [infoVideo])
+
+
+  
   const updateList = (videoName)=>{
-    setSeqVideos(seqVideos.filter(index=> index !== videoName ))
+    setSeqVideos(seqVideos.filter(index=> index !== videoName ));
+    
+  }
+  const updateListView = (videoName)=>{
+    setInfoVideo(infoVideo.filter(index=> index !== videoName ));
   }
 
   
   const ShowButton =(e) => {
     return( 
   
-      <Link onClick={(e)=>setSeqVideos([...seqVideos,videoSrcInfo['new_video_name']])}>
+      <Link onClick={(e)=>{setSeqVideos([...seqVideos,videoSrcInfo['new_video_name']]); setInfoVideo([...infoVideo,videoSrcInfo]);}}>
         <Button bg="#ffffff" textColor={'#6980e0'} fontSize={"17px"} borderRadius ="10px" textAlign="center" p="2px"  width="190px" height="60px" verticalAlign="center" border={"2px solid #2b468b" }>
           <Image borderRadius ="10px" src = "images/check-mark.png" w="30px" mr="2%" />
           <Text>Add to the List</Text>
@@ -64,7 +76,6 @@ export default function choosevideo({metadata,filters}) {
   }
 
   const PreviewBox = (e) =>  {
-    
     return( 
 
       <Box bg="#bbcdff" borderRadius ="10px"  p="1%" minW="50%" h="520px"  >
@@ -106,7 +117,7 @@ export default function choosevideo({metadata,filters}) {
           <HStack mt="1%" >
           <Box >
             { seqVideos.length<3 ? <ShowButton/> : <Text textColor={"#2b468b"}>No more space</Text>}  
-            <Link onClick={(e)=>updateList(videoSrcInfo['new_video_name'])}   >
+            <Link onClick={(e)=>{updateList(videoSrcInfo['new_video_name']);updateListView(videoSrcInfo)}}   >
               <Button bg="#ffffff"  textColor={'#6980e0'}  fontSize={"15px"} borderRadius ="10px" textAlign="center" p="2px"  width="190px" height="60px" verticalAlign="center" border={"2px solid #2b468b" }>
                 <Image borderRadius ="10px" src = "images/cancel.png" w="30px" mr="2%" />
                 <Text>Remove from the list</Text>
@@ -177,7 +188,20 @@ export default function choosevideo({metadata,filters}) {
     
   }
 
+  const ShowSequence = (e) =>{
+    return(
+        <HStack ml="5%">
+        {infoVideo.map((cur,i)=>(
+          <Box >
+            <Text textColor={"#2b468b"}> {cur['new_video_name']} </Text>
+            <Image src={cur['thumbnail']} maxW="30%"/>
+          </Box>
+          
+        ))}
+        </HStack>
 
+    )
+  }
 
 
   return (
@@ -186,26 +210,27 @@ export default function choosevideo({metadata,filters}) {
       <HStack>
         <FilterButton/>
         
-        <Box bg="#bbcdff" borderRadius ="10px"  p="0.5%" w="100%" h="90px"> 
-        { seqVideos.length==3 ? <Link onClick={submitSeq} href='/newsequence'><ButtonSmall title={"Submit"} icon ={"images/plus.png"} /></Link> : null}
+        <Box bg="#bbcdff" borderRadius ="10px"   w="75%" h="90px"> 
+          {infoVideo!=null ? <ShowSequence/> : null }
         
         </Box>
+        { seqVideos.length==3 ? <Link onClick={submitSeq} href='/newsequence'><ButtonSmall title={"Submit"} icon ={"images/plus.png"} /></Link> : null}
       </HStack>
       <HStack mt="1%">
         <Box bg="#bbcdff" borderRadius ="10px"  p="0.5%" maxW="50%" h="520px" overflow="auto" css={{ 
                 '&::-webkit-scrollbar': 
-                { width: '1px', },
+                { width: '3px', },
                 '&::-webkit-scrollbar-track': {
-                  width: '1px',
+                  width: '3px',
                 },
                 '&::-webkit-scrollbar-thumb': {
-                  background: '#405F73',
+                  background: '#2b468b',
                   borderRadius: '24px',
                 },}} >
           <SimpleGrid columns={3} spacing={2} ml="1%">     
             
           {met.map((currentElement, index) => (
-            <Link onClick={(e)=>setVideoSrcInfo(currentElement)}>
+            <Link onClick={(e)=>setVideoSrcInfo(currentElement)} key={index}>
               <Box >
                 <Text textColor={"#2b468b"}> {currentElement['new_video_name']} </Text>
                 <Image src={currentElement['thumbnail']}/>

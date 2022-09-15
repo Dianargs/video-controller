@@ -1,5 +1,5 @@
 import {Box,Text,Image,SimpleGrid, Link, HStack, Center,Button} from '@chakra-ui/react'
-import { useState,useRef } from 'react'
+import { useState,useRef,useEffect } from 'react'
 import React from 'react';
 import Header from '../../styles/header'
 
@@ -8,16 +8,22 @@ import ButtonSmall from '../../styles/buttonSmall';
 export default function chooseimage({metadata}) {
   const [imgSrc,setImgSrc] = React.useState(null);
   const [seqImg,setSeqImg] = React.useState([]);
+  const [infoImage, setInfoImage] = React.useState([]);
  
+  useEffect(()=>{
+    setInfoImage(infoImage)
+  }, [infoImage])
+
   const updateList = (imgName)=>{
-    setSeqImg(seqImg.filter(index=> index !== imgName ))
+    setSeqImg(seqImg.filter(index=> index !== imgName ));
+    setInfoImage(seqImg.filter(index=> index !== imgName));
   }
   
   
   
   const ShowButton =(e) => {
     return( 
-    <Link onClick={(e)=>setSeqImg([...seqImg,imgSrc])} >
+    <Link onClick={(e)=>{setSeqImg([...seqImg,imgSrc]); setInfoImage([...infoImage,imgSrc]);}} >
       <Button bg="#ffffff"  textColor={'#6980e0'}  fontSize={"15px"} borderRadius ="10px" textAlign="center" p="2px"  width="190px" height="60px" verticalAlign="center" border={"2px solid #2b468b" } >
         <Image borderRadius ="10px" src = "images/check-mark.png" w="30px" mr="2%"   />
         <Text>Add to the List</Text>
@@ -41,13 +47,14 @@ export default function chooseimage({metadata}) {
 
   const PreviewBox = (e) =>  {
     return( 
-      <Box bg="#bbcdff" borderRadius ="10px"  p="1%" minW="50%" h="520px" >
+      <Box bg="#bbcdff" borderRadius ="10px"  p="1%" minW="50%" h="500px" >
         <Text  fontSize="25px" textColor={"#2b468b"} >{imgSrc}</Text>
         <Center>
             <Image src={"http://192.168.0.100:8085/download_content/images/"+imgSrc} maxH="380px"/>
         </Center>
-        <HStack>
+       
           <Box mt="2%">
+          <HStack>
             { seqImg.length<3 ? <ShowButton/> : <Text textColor={"#2b468b"}>No more space</Text>}  
             <Link onClick={(e)=>updateList(imgSrc)} >
               <Button bg="#ffffff"  textColor={'#6980e0'}  fontSize={"15px"} borderRadius ="10px" textAlign="center" p="2px"  width="190px" height="60px" verticalAlign="center" border={"2px solid #2b468b" } >
@@ -55,24 +62,39 @@ export default function chooseimage({metadata}) {
                 <Text>Remove from the list</Text>
               </Button>
             </Link>
+            </HStack>
           </Box>
-        </HStack>
+        
       </Box>
     )
 } 
+const ShowSequence = (e) =>{
+  return(
+      <HStack ml="10%" spacing={200}>
+      {infoImage.map((cur,i)=>(
+        <Box >
+          <Text textColor={"#2b468b"}> {cur} </Text>
+          <Image src={"http://192.168.0.100:8085/download_content/images/"+cur} w="150px"/>
+        </Box>
+        
+      ))}
+      </HStack>
+
+  )
+}
 
   return (
     <Box>
       <Header title ={"Choose Image"}/>
       <HStack>
-        <Box bg="#bbcdff" borderRadius ="10px"  p="0.5%" w="100%" h="100px">
-            <Text textColor={"#2b468b"} textAlign={"center"}>This object was touched by a healthy or unhealthy person? </Text>
-            <Image src={"http://192.168.0.100:8085/download_content/images/Image1.png"}  maxH="75%"/>
+        <Box bg="#bbcdff" borderRadius ="10px" w="80%" h="110px">
+            
+            {infoImage!=null ? <ShowSequence/> : null }
         </Box>
         { seqImg.length==3 ? <Link onClick={submitSeq} href='/newsequence'><ButtonSmall title={"Submit"} icon ={"images/plus.png"} /></Link> : null}
       </HStack>
       <HStack mt="1%">
-        <Box bg="#bbcdff" borderRadius ="10px"  p="0.5%" maxW="50%" h="520px" overflow="auto" css={{ 
+        <Box bg="#bbcdff" borderRadius ="10px"  p="0.5%" maxW="50%" h="500px" overflow="auto" css={{ 
                 '&::-webkit-scrollbar': 
                 { width: '1px', },
                 '&::-webkit-scrollbar-track': {

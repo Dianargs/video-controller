@@ -1,7 +1,14 @@
-import {Box,HStack,Button,Center,Image, Text, Link, VStack} from '@chakra-ui/react'
+import {Box,HStack,Button,Center,Image, Text, Link, VStack, Popover, PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,} from '@chakra-ui/react'
 import Header from '../../styles/header'
 import { useState,useRef, useEffect } from 'react'
 import React from 'react';
+import LittleButton from '../../styles/littleButton';
 
 export default function sequences({metadata}) {
   const [seq,setSeq] = React.useState([]);
@@ -37,30 +44,53 @@ export default function sequences({metadata}) {
             <Text>New Sequence</Text>
           </Button>
         </Link>
- 
       </HStack>
       
     
   
-        <Box borderRadius ="10px" bg="#eaf3fa" mt="1%" ml="4%" minW="40%" maxW={"40%"} minH="90%" overflow="auto"  css={{ 
-                '&::-webkit-scrollbar': 
-                { width: '1px', },
-                '&::-webkit-scrollbar-track': {
-                  width: '1px',
-                },
-                '&::-webkit-scrollbar-thumb': {
-                  background: '#405F73',
-                  borderRadius: '24px',
-                },
-                }} >
-          <Text  fontSize="25px" textColor={"#2b468b"}  ml="2%">Existing Sequences</Text>
-          <VStack m="1%" spacing={5} >
-            {seq.map((cur,index) => (
-                <Text  fontSize="25px" textColor={"#6980e0"}  ml="2%" >{cur['seq_name']}</Text>
-            ))}
-            
-          </VStack>
-        </Box>
+      <Box borderRadius ="10px" bg="#eaf3fa" mt="1%" ml="4%"  maxW={"40%"} h="520px" overflowY="auto"  css={{ 
+              '&::-webkit-scrollbar': 
+              { width: '4px', },
+              '&::-webkit-scrollbar-track': {
+                width: '4px',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: '#2b468b',
+                borderRadius: '24px',
+              },
+              }} >
+        <Text  fontSize="25px" textColor={"#2b468b"}  ml="2%">Existing Sequences</Text>
+        <VStack mt="1%" spacing={5} verticalAlign={"Center"}  >
+          {seq.map((cur,index) => (
+            <VStack verticalAlign={"Center"}>
+              <Text  fontSize="25px" textColor={"#6980e0"} ml="2%" w="100%" >{cur['seq_name']}</Text>
+                <Box mt="2%">
+                  <Popover >
+                  <PopoverTrigger>
+                  <Link >
+                      <LittleButton title={'Show Sequence'} >
+                      
+                      </LittleButton>
+                  </Link>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                      <PopoverArrow />
+                      <PopoverCloseButton />
+                      <PopoverHeader>{cur['seq_name']}</PopoverHeader>
+                      <PopoverBody>
+                      
+                      {cur['sequence'].map((curr,ind)=>(
+                          <Text textColor={'#2b468b'}>{curr}</Text>
+                      ))}                   
+                      </PopoverBody>
+                  </PopoverContent>
+                  </Popover>    
+                  </Box>
+            </VStack>
+          ))}
+          
+        </VStack>
+      </Box>
     
     </Box>
 
