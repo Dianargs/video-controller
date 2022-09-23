@@ -42,7 +42,7 @@ export default function Home() {
       <Flex justify={'left'} ml="5%">
         <Link href='/experiencedata'>
           <Image src ={"images/analysis.png"} width="90px" ml="25%"  mb="2%" />
-          <Button title={"Analyse Data"} />
+          <Button title={"Experiments Data"} />
         </Link>
       </Flex>
       

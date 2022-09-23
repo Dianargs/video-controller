@@ -63,10 +63,10 @@ export default function experiencedata({metadata,tableH}) {
 
       return (
     <Box >
-        <Header title ={"Analyse Data"}/>
+        <Header title ={"Experiments Data"}/>
         <Box ml="1%" mt="1%" >
             <TableContainer>
-                <Table variant='striped' colorScheme='linkedin' display={'block'}>
+                <Table variant='striped' colorScheme='linkedin' bg={'white'} display={'block'}>
                     <TableCaption bg="#eaf3fa">Data from all the experiments</TableCaption>
                     <Thead>
                     <Tr>
