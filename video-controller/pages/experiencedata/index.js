@@ -24,11 +24,13 @@ import json2csv from "json2csv";
 import { map } from 'jquery';
 
 
-export default function experiencedata({metadata}) {
+export default function experiencedata({metadata,tableH}) {
     const [dataForDownload, setDataForDownload] = React.useState([]);
     const [bDownloadReady, setDownloadReady] = React.useState(false);
     const [tableInfo, setTableInfo] = React.useState([]);
     const csvLink = useRef(null)
+/* cur */
+
 
     useEffect(()=>{
         setTableInfo(metadata)
@@ -56,6 +58,9 @@ export default function experiencedata({metadata}) {
             console.log(dataForDownload);
         }
     }
+
+   
+
       return (
     <Box >
         <Header title ={"Analyse Data"}/>
@@ -65,16 +70,20 @@ export default function experiencedata({metadata}) {
                     <TableCaption bg="#eaf3fa">Data from all the experiments</TableCaption>
                     <Thead>
                     <Tr>
-                        <Th w="5%">Participant</Th>
-                        <Th w="5%">Sequence Name</Th>
-                        <Th w="25%">Quiz</Th>
+                    {tableH.map((cur,i)=>{
+                        if(i!=2){
+                            return(<Th w="5%">{cur}</Th>)
+                            
+                        }    
+                    })}
+                        
                     </Tr>
                     </Thead>
                     <Tbody>
                     {tableInfo.map((cur,i)=>(
                         <Tr>
-                            <Td textColor={'#2b468b'}>{cur['participant']}</Td>
-                            <Td textColor={'#2b468b'}>{cur['seqName']}
+                            <Td textColor={'#2b468b'}>{cur[tableH[0]]}</Td>
+                            <Td textColor={'#2b468b'}>{cur[tableH[1]]}
                                 <Box mt="2%">
                                     <Popover >
                                     <PopoverTrigger>
@@ -90,7 +99,7 @@ export default function experiencedata({metadata}) {
                                         <PopoverHeader>Sequence</PopoverHeader>
                                         <PopoverBody>
                                         
-                                        {cur['confSeq'].map((curr,ind)=>(
+                                        {cur[tableH[2]].map((curr,ind)=>(
                                             <Text textColor={'#2b468b'}>{curr}</Text>
                                         ))}                   
                                         </PopoverBody>
@@ -98,15 +107,24 @@ export default function experiencedata({metadata}) {
                                     </Popover>    
                                 </Box>
                             </Td>
-                            <Td textColor={'#2b468b'}>{cur['quiz']}</Td>
+                            {tableH.map((current,ind)=>
+                            {if (ind > 2){
+                                    return (
+                                        <Td textColor={'#2b468b'}>{cur[current]}</Td>
+                                    )
+                                }
+                            })}
                         </Tr>
                     ))}
                      </Tbody>
                     <Tfoot>
                     <Tr>
-                        <Th w="5%">Participant</Th>
-                        <Th w="5%">Sequence Name</Th>
-                        <Th w="25%">Quiz</Th>
+                    {tableH.map((cur,i)=>{
+                        if(i!=2){
+                            return(<Th w="5%">{cur}</Th>) 
+                        }    
+                    })
+                    }
                     </Tr>
                     </Tfoot>
                 </Table>
@@ -138,9 +156,27 @@ export async function getServerSideProps(context) {
         },
     });
     let metadata = await res.json();
+    //console.log(metadata);
+    let tmp = [];
+    
+    for (let index = 0; index < metadata.length; index++) {
+        tmp = [...tmp,Object.keys(metadata[index])]
+    }
+    // PARA TABELA PRINT THANKS BYE
+    console.log(tmp[0][1]);
+    let tableH = [];
+    for (let i = 0; i < tmp.length; i++) {
+        for (let a = 0; a < tmp[i].length; a++) {
+            if(!tableH.includes(tmp[i][a])){
+                tableH=[...tableH,tmp[i][a]];
+            };
+        }
+    }
+   
+    console.log(tableH);
   
     return {
-        props: { metadata },
+        props: { metadata,tableH},
     };
   }
   
