@@ -27,7 +27,7 @@ export default function handler(req, res) {
 
 async function consumer(){
   
-  const consumer = kafka.consumer({ groupId: 'test-group'+ Date.now()})
+  const consumer = kafka.consumer({ groupId: 'test-group'+ Math.floor(Math.random() * (2 - 0 + 1) + 0)})
 
   await consumer.connect()
   await consumer.subscribe({ topic: 'quickstart', fromBeginning: false })
