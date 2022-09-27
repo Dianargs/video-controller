@@ -1,4 +1,10 @@
-import {Box,HStack,Button,Center,Image, Text, Link, VStack,Input} from '@chakra-ui/react'
+import {Box,HStack,Button,Center,Image, Text, Link, VStack,Input,Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,useDisclosure} from '@chakra-ui/react'
 import Header from '../../styles/header'
 import { useState,useRef, useEffect } from 'react'
 import React from 'react';
@@ -13,6 +19,7 @@ export default function newsequence({metadata,seqvideos,seqimages,infoV}) {
   const [infoVideo, setInfoVideo] = React.useState([]);
   const [tmp, setTmp] = React.useState([]);
   var aux = [];
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
 
  /* Setting the state of tmpFullSeq to the value of metadata[0]['video_names'] */
@@ -142,23 +149,12 @@ const getSequence = (cur) =>{
   }   
 }
 
+
+
   return (
     <Box>
       <Header title ={"New Sequence"}/>
-      <HStack ml="5%">
-        <Box  borderRadius ="10px" bg="#bbcdff"  minW="45%"maxW="25%" maxH="60%" mr="20%" >
-          <Text align={"center"} fontSize="25px" textColor={"#6980e0"}>State of the Sequence</Text>
-          <Input bg="#ffffff" borderRadius ="10px" w="98%" ml="1%" placeholder='Name of the sequence' _placeholder={{ opacity: 0.9, color: '##6980e0' }} value={seqName}  onChange={(e)=> setSeqName(e.target.value)}/>
-          <Box w="100%" align={'center'} mb="10px">
-            <Link onClick={saveDatabase} href = '/sequences'>
-              <Button  bg="#ffffff" textColor={'#6980e0'} borderRadius ="10px" textAlign="center" p="2px"  width="200px" height="60px" verticalAlign="center" border={"4px solid #bbcdff" }>
-                <Text textColor={'#6980e0'} >FINISH</Text>
-              </Button>
-            </Link>
-            
-          </Box>
-        </Box>
-    
+
       <VStack >
         <Link href='/choosevideo' onClick={saveForLater}>
           <Button bg="#ffffff" textColor={'#6980e0'} borderRadius ="10px" textAlign="center" p="2px"  width="200px" height="60px" verticalAlign="center" border={"4px solid #bbcdff" }>
@@ -173,10 +169,8 @@ const getSequence = (cur) =>{
           </Button>
         </Link>
       </VStack>
-      </HStack>
-      
+   
       <Center mt="1%">
-       
         <Box borderRadius ="10px" bg="#bbcdff" minW="95%" minH="90%" overflow="auto"  css={{ 
                 '&::-webkit-scrollbar': 
                 { width: '1px', },
@@ -216,6 +210,36 @@ const getSequence = (cur) =>{
         </Box>
         
       
+      </Center>
+      <Center mt="5%">
+        
+        <Link onClick={onOpen} >
+          <Button bg="#ffffff" textColor={'#6980e0'} fontSize={"18px"} borderRadius ="10px" textAlign="center" p="2px"  width="200px" height="60px" verticalAlign="center" border={"4px solid #bbcdff" }>
+            <Text>Done</Text>
+          </Button>
+        </Link>
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Name your sequence</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Input bg="#ffffff" borderRadius ="10px" w="98%" ml="1%" placeholder='Name of the sequence' _placeholder={{ opacity: 0.9, color: '##6980e0' }} value={seqName}  onChange={(e)=> setSeqName(e.target.value)}/>
+            </ModalBody>
+
+            <ModalFooter>
+            <Link onClick={saveDatabase} href = '/sequences'>
+              <Button  bg="#ffffff" textColor={'#6980e0'} borderRadius ="10px" textAlign="center" p="2px"  width="100px" height="40px" verticalAlign="center" border={"4px solid #bbcdff" }>
+                <Text textColor={'#6980e0'} >FINISH</Text>
+              </Button>
+            </Link>
+              <Button  bg="#ffffff" textColor={'#6980e0'} borderRadius ="10px" textAlign="center" p="2px"  width="100px" height="40px" verticalAlign="center" border={"4px solid #bbcdff" } onClick={onClose}>
+                Close
+              </Button>
+              
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </Center>
     </Box>
 

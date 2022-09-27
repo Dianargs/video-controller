@@ -1,4 +1,4 @@
-import {Box,Textarea,Checkbox, Image, Text, Input, HStack, VStack, Center, Link, CheckboxGroup, Button, AspectRatio} from '@chakra-ui/react'
+import {Box,Textarea,Checkbox, Image,Spinner, Text, Input, HStack, VStack, Center, Link, CheckboxGroup, Button, AspectRatio} from '@chakra-ui/react'
 import Header from '../../styles/header'
 import { useState, useRef, useEffect } from 'react'
 import React from 'react';
@@ -14,6 +14,7 @@ export default function addimage() {
   const [nameImage, setNameImage] = React.useState('')
   const [selectedFile, setSelectedFile] = useState()
   const [imageSrc, setImageSrc] = useState('')
+  const [isSubmiting, setisSubmiting] = useState(false)
  // const videoRef = useRef(null)
   
 
@@ -23,8 +24,15 @@ export default function addimage() {
   }, [selectedFile])
 
   
+  useEffect(()=>{
+    setisSubmiting(isSubmiting)
+  }, [isSubmiting])
+
+
+  
   let submitForm = async (e) => {
     e.preventDefault();
+    setisSubmiting(true);
     let blob = new Blob([selectedFile], {type: 'video/mp4'});
    
     let result = (await blobTo64(blob)).split(",");
@@ -37,7 +45,7 @@ export default function addimage() {
   
     setNameImage("");
     setSelectedFile("");
-
+    setisSubmiting(false);
     
   }  
  
@@ -68,7 +76,7 @@ export default function addimage() {
                   border:'4px solid #bbcdff'   
               }
               }>
-              <input type="file" name="file"  onChange={(e) => setSelectedFile(e.target.files[0])} style={
+              <input type="file" name="file" accept="image/png"  onChange={(e) => setSelectedFile(e.target.files[0])} style={
                 { 
                     opacity: '0',
                     width: '200px',
@@ -90,7 +98,9 @@ export default function addimage() {
        
        
         <Center mt ="1%">
-        <Button type="submit" bg="#ffffff" textColor={'#6980e0'} borderRadius ="10px" textAlign="center" width="200px" height="60px" verticalAlign="center" border={"4px solid #bbcdff" } fontSize={"20px"}>Submit</Button>
+        <Button type="submit" disabled={isSubmiting} bg="#ffffff" textColor={'#6980e0'} borderRadius ="10px" textAlign="center" width="200px" height="60px" verticalAlign="center" border={"4px solid #bbcdff" } fontSize={"20px"}>
+        {isSubmiting && (<Spinner thickness='4px' speed='0.65s' emptyColor='gray.200' color='blue.500' size='xl' />) }
+          Submit</Button>
         </Center>
       </form>
      

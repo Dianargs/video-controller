@@ -1,4 +1,4 @@
-import {Box,Textarea,Checkbox, Image, Text, Input, HStack, VStack, Center, Link, CheckboxGroup, Button, AspectRatio} from '@chakra-ui/react'
+import {Box,Textarea,Checkbox, Image, Text, Input, HStack, VStack, Center, Link, CheckboxGroup, Button, AspectRatio, Spinner} from '@chakra-ui/react'
 import Header from '../../styles/header'
 import { useState, useRef, useEffect } from 'react'
 import React from 'react';
@@ -15,6 +15,8 @@ export default function addvideo({filters}) {
   const [videoSrc, setVideoSrc] = useState('')
   const [imgSrc, setImgSrc] = useState('')
   const [tmp, setTmp] = useState('')
+  const [isSubmiting, setisSubmiting] = useState(false)
+  const [captureFlag, setcaptureFlag] = useState(true)
   const videoRef = useRef(null)
   const imagemRef = useRef(null)
  
@@ -26,6 +28,9 @@ export default function addvideo({filters}) {
     setFilterState(filters)
   }, [filters])
 
+  useEffect(()=>{
+    setisSubmiting(isSubmiting)
+  }, [isSubmiting])
 
 
   useEffect(() => {
@@ -33,25 +38,21 @@ export default function addvideo({filters}) {
     setVideoSrc(src)
   }, [selectedFile])
 
+  useEffect(()=>{
+    setcaptureFlag(captureFlag)
+  }, [captureFlag])
   
  
   let submitForm = async (e) => {
     e.preventDefault();
-    /* This is a GET request to the server to get the number of videos. */
-    let nvideosres= await fetch("http://localhost:3005/api/video",{
-      method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-        },
-    });
-    let n_videos = await nvideosres.json();
-    tmp = parseInt(n_videos['data']) +1;
+    setisSubmiting(true);
+  
  /* Sending a POST request to the server with the video name, new video name, video info and filters. */
     let res = await fetch("http://localhost:3005/api/video", {
       method: "POST",
       body: JSON.stringify({
         video_name: selectedFile.name,
-        new_video_name:"video"+tmp+".MP4",
+        new_video_name:nameVideo+".MP4",
         video_info: infoVideo,
         filters : tags,
         thumbnail: imgSrc
@@ -63,7 +64,7 @@ export default function addvideo({filters}) {
    
     let result = (await blobTo64(blob)).split(",");
 
-    let upres =await fetch("http://localhost:8085/upload_content/videos/video"+tmp+".MP4",{
+    let upres =await fetch("http://localhost:8085/upload_content/videos/"+nameVideo+".MP4",{
       method: "POST",
       body:JSON.stringify({file: String(result[1]) }),
       headers:{'Content-Type':'application/json'}
@@ -75,6 +76,8 @@ export default function addvideo({filters}) {
     setTags([]);
     setImgSrc("");
     imagemRef = null;
+    setcaptureFlag(true);
+    setisSubmiting(false);
     
   }  
 
@@ -130,7 +133,7 @@ export default function addvideo({filters}) {
                 border:'4px solid #bbcdff'  
             }
             }>
-              <input type="file" name="file"  onChange={(e) => setSelectedFile(e.target.files[0])} style={
+              <input type="file" name="file" accept="video/mp4" onChange={(e) => setSelectedFile(e.target.files[0])} style={
                 { 
                     opacity: '0',
                     width: '200px',
@@ -141,6 +144,7 @@ export default function addvideo({filters}) {
               <Image src = "images/video.png" width="40px"  mr="10%"/>
               <label for="file" style={{ color:'#6980e0'}}>Select video</label>
             </Button>
+            <Input bg="#bbcdff"  borderRadius ="10px" h="60px" w="320px" placeholder='Name Your video' _placeholder={{ opacity: 0.9, color: '#6980e0' }} value={nameVideo}  onChange={(e)=> setnameVideo(e.target.value)} type ="text"></Input>
           </HStack>
         </Center>
     
@@ -156,7 +160,7 @@ export default function addvideo({filters}) {
                   src={videoSrc}
                 />
               </AspectRatio>
-              <Link onClick={(e) => capture()} ml="35%">
+              <Link onClick={(e) =>{setcaptureFlag(false); capture();}} ml="35%">
                 <Button bg="#ffffff" textColor={'#6980e0'} borderRadius ="10px" textAlign="center" p="2px"  width="200px" height="60px" verticalAlign="center" border={"4px solid #bbcdff" } >
                   Capture Thumbnail
                 </Button>
@@ -164,7 +168,11 @@ export default function addvideo({filters}) {
             </Box>
             <VStack>
               <Textarea bg="#bbcdff"  borderRadius ="10px" h="270px" w="320px" placeholder='Details about the video...' _placeholder={{ opacity: 0.9, color: '#6980e0' }} value={infoVideo}  onChange={(e)=> setinfoVideo(e.target.value)} type ="text"/>
-              <canvas ref={imagemRef} id="canvas" width={"320"} height="180" display="none"></canvas>
+              <VStack>
+                <canvas ref={imagemRef} id="canvas" width={"320"} height="180" display="none" z-index={"0"}  position={"flex"}></canvas>
+                {captureFlag && (<Box bg="#bbcdff" w={"320px"} h={"180px"} display={""} position={"absolute"} css={{top:'48.2% '}} z-index={"1"}></Box>)}
+              </VStack>
+                
             </VStack>
             
             <VStack bg="#bbcdff" borderRadius="10px" align={'center'} w="21%" maxH="370px">
@@ -195,7 +203,9 @@ export default function addvideo({filters}) {
           </HStack>
         </Center>
         <Center mt ="1%">
-        <Button type="submit" bg="#ffffff" textColor={'#6980e0'} borderRadius ="10px" textAlign="center" width="200px" height="60px" verticalAlign="center" border={"4px solid #bbcdff" } fontSize={"20px"}>Submit</Button>
+        <Button type="submit" disabled={isSubmiting} bg="#ffffff" textColor={'#6980e0'} borderRadius ="10px" textAlign="center" width="200px" height="60px" verticalAlign="center" border={"4px solid #bbcdff" } fontSize={"20px"}>
+          {isSubmiting && (<Spinner thickness='4px' speed='0.65s' emptyColor='gray.200' color='blue.500' size='xl' />) }
+          Submit</Button>
         </Center>
         
       </form>

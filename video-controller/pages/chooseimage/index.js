@@ -1,4 +1,4 @@
-import {Box,Text,Image,SimpleGrid, Link, HStack, Center,Button} from '@chakra-ui/react'
+import {Box,Text,Image,SimpleGrid, Link, HStack, Center,Button,Spinner, VStack} from '@chakra-ui/react'
 import { useState,useRef,useEffect } from 'react'
 import React from 'react';
 import Header from '../../styles/header'
@@ -9,10 +9,16 @@ export default function chooseimage({metadata}) {
   const [imgSrc,setImgSrc] = React.useState(null);
   const [seqImg,setSeqImg] = React.useState([]);
   const [infoImage, setInfoImage] = React.useState([]);
+  const [isSubmiting, setisSubmiting] = useState(false)
  
   useEffect(()=>{
     setInfoImage(infoImage)
   }, [infoImage])
+
+  useEffect(()=>{
+    setisSubmiting(isSubmiting)
+  }, [isSubmiting])
+
 
   const updateList = (imgName)=>{
     setSeqImg(seqImg.filter(index=> index !== imgName ));
@@ -32,7 +38,7 @@ export default function chooseimage({metadata}) {
     )
   }
   let  submitSeq = async (e) => {
-
+    setisSubmiting(true);
     let res = await fetch("http://localhost:3005/api/tmpimages", {
       method: "POST",
       body: JSON.stringify({
@@ -41,7 +47,7 @@ export default function chooseimage({metadata}) {
       headers:{'Content-Type':'application/json'}
     });
     res = await res.json();
-  
+    setisSubmiting(false);
 }
 
 
@@ -70,15 +76,21 @@ export default function chooseimage({metadata}) {
 } 
 const ShowSequence = (e) =>{
   return(
-      <HStack ml="10%" spacing={200}>
+    <VStack>
+       <Text fontSize={"10px"} textColor="#2b468b">Choose three images!</Text>
+       <HStack ml="10%" spacing={200}>
       {infoImage.map((cur,i)=>(
+        <Link onClick={(e)=>setImgSrc(cur)}>
         <Box >
           <Text textColor={"#2b468b"}> {cur} </Text>
-          <Image src={"http://192.168.0.100:8085/download_content/images/"+cur} w="150px"/>
+          <Image src={"http://192.168.0.100:8085/download_content/images/"+cur} w="150px" />
         </Box>
+      </Link>
         
       ))}
       </HStack>
+    </VStack>
+     
 
   )
 }
@@ -87,11 +99,11 @@ const ShowSequence = (e) =>{
     <Box>
       <Header title ={"Choose Image"}/>
       <HStack>
-        <Box bg="#bbcdff" borderRadius ="10px" w="80%" h="110px">
+        <Box bg="#bbcdff" borderRadius ="10px" w="80%" h="120px">
             
             {infoImage!=null ? <ShowSequence/> : null }
         </Box>
-        { seqImg.length==3 ? <Link onClick={submitSeq} href='/newsequence'><ButtonSmall title={"Submit"} icon ={"images/plus.png"} /></Link> : null}
+        { seqImg.length==3 ? <Link onClick={submitSeq} href='/newsequence'><ButtonSmall title={"Submit"} icon ={"images/plus.png"} /> {isSubmiting && (<Spinner thickness='4px' speed='0.65s' emptyColor='gray.200' color='blue.500' size='xl' />) }</Link> : null}
       </HStack>
       <HStack mt="1%">
         <Box bg="#bbcdff" borderRadius ="10px"  p="0.5%" maxW="50%" h="500px" overflow="auto" css={{ 

@@ -1,4 +1,4 @@
-import {Box,Text,Image,SimpleGrid, Link,VStack,HStack, Center,Popover,
+import {Box,Text,Image,Spinner,SimpleGrid, Link,VStack,HStack, Center,Popover,
   PopoverTrigger,
   PopoverContent,
   PopoverHeader,
@@ -29,6 +29,7 @@ export default function choosevideo({metadata,filters}) {
   const [met,setMet] = React.useState(metadata)
   const videoRef = useRef(null);
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const [isSubmiting, setisSubmiting] = useState(false)
 
 
   useEffect(()=>{
@@ -38,6 +39,10 @@ export default function choosevideo({metadata,filters}) {
   useEffect(()=>{
     setInfoVideo(infoVideo)
   }, [infoVideo])
+
+  useEffect(()=>{
+    setisSubmiting(isSubmiting)
+  }, [isSubmiting])
 
 
   
@@ -63,7 +68,7 @@ export default function choosevideo({metadata,filters}) {
   }
 
   let  submitSeq = async (e) => {
-
+    setisSubmiting(true);
       let res = await fetch("http://localhost:3005/api/tmp", {
         method: "POST",
         body: JSON.stringify({
@@ -72,7 +77,7 @@ export default function choosevideo({metadata,filters}) {
         headers:{'Content-Type':'application/json'}
       });
       res = await res.json();
-    
+      setisSubmiting(false);
   }
 
   const PreviewBox = (e) =>  {
@@ -96,7 +101,7 @@ export default function choosevideo({metadata,filters}) {
               <PopoverTrigger>
               <Link >
                 <Button bg="#ffffff" textColor={'#6980e0'} fontSize={"17px"} borderRadius ="10px" textAlign="center" p="2px"  width="200px" height="60px" verticalAlign="center" border={"2px solid #2b468b" }>
-                  <Text>Show Filters</Text>
+                  <Text>Show Tags</Text>
                 </Button>
               </Link>
               </PopoverTrigger>
@@ -189,16 +194,20 @@ export default function choosevideo({metadata,filters}) {
   }
 
   const ShowSequence = (e) =>{
-    return(
-        <HStack ml="5%">
+    return(<VStack>
+       <Text fontSize={"10px"} textColor="#2b468b">Choose three videos!</Text>
+       <HStack ml="5%">
         {infoVideo.map((cur,i)=>(
-          <Box >
-            <Text textColor={"#2b468b"}> {cur['new_video_name']} </Text>
-            <Image src={cur['thumbnail']} maxW="30%"/>
-          </Box>
-          
+           <Link onClick={(e)=>setVideoSrcInfo(cur)} key={i}>
+           <Box >
+             <Text textColor={"#2b468b"}> {cur['new_video_name']} </Text>
+             <Image src={cur['thumbnail']} maxW="25%"/>
+           </Box>
+         </Link>
         ))}
         </HStack>
+    </VStack>
+       
 
     )
   }
@@ -210,11 +219,11 @@ export default function choosevideo({metadata,filters}) {
       <HStack>
         <FilterButton/>
         
-        <Box bg="#bbcdff" borderRadius ="10px"   w="75%" h="90px"> 
+        <Box bg="#bbcdff" borderRadius ="10px"   w="75%" h="100px"> 
           {infoVideo!=null ? <ShowSequence/> : null }
         
         </Box>
-        { seqVideos.length==3 ? <Link onClick={submitSeq} href='/newsequence'><ButtonSmall title={"Submit"} icon ={"images/plus.png"} /></Link> : null}
+        { seqVideos.length==3 ? <Link onClick={submitSeq} href='/newsequence'><ButtonSmall title={"Submit"} icon ={"images/plus.png"} /> {isSubmiting && (<Spinner thickness='4px' speed='0.65s' emptyColor='gray.200' color='blue.500' size='xl' />) }</Link> : null}
       </HStack>
       <HStack mt="1%">
         <Box bg="#bbcdff" borderRadius ="10px"  p="0.5%" maxW="50%" h="520px" overflow="auto" css={{ 

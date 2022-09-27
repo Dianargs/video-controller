@@ -9,18 +9,9 @@ export default function Home() {
     <Box >
         <Header title ={"Details about the experience"}/>
         <HStack>
-          <VStack width="400px" mr="2%">
-          
-            <iframe
-              title='oculus'
-              src='https://www.oculus.com/casting'
-              allowFullScreen
-            />
-        
-          </VStack>
-          <VStack>
-            <Text mt="3%" color={"#6980e0"}  fontSize="28px">Image showing:</Text>
-            <Text mt="3%" color={"#6980e0"}  fontSize="28px">Image3</Text>
+          <VStack ml="5%" border={"4px solid #bbcdff" } borderRadius ="10px" p="5px">
+            <Text mt="3%" color={"#6980e0"}  fontSize="28px">Showing Now:</Text>
+            <Text mt="3%" color={"#6980e0"}  fontSize="28px">SickToy.MP4</Text>
           </VStack>
         
         </HStack>
